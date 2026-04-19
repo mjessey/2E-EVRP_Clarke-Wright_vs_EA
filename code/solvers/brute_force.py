@@ -1,84 +1,115 @@
-# -----------------------------------------------------------
-#   Brute-force (permutation) solver for the tiny toy version
-#   of the 2E-EVRP instance provided in the README.
-# -----------------------------------------------------------
+# ────────────────────────────────────────────────────────────────────
+#  Brute-force search for tiny instances that may have several
+#  satellites, LVs and EVs.  The enumeration space is
+#
+#       ∏sat  ( |C_sat|! )
+#
+#  i.e. all permutations of the customer set of *each* satellite.
+#  The mapping  Customer → Satellite  is fixed to the nearest
+#  satellite (you can change that policy easily).
+# ────────────────────────────────────────────────────────────────────
 
-from itertools import permutations
-from math import sqrt
-from typing import Dict, List, Any, Tuple
+from __future__ import annotations
+from itertools import permutations, product
+from collections import defaultdict
+from math import hypot, factorial
+from typing import Dict, Any, List, Tuple
+
+from evaluator import Evaluator, Solution
 
 
-class BruteForce:
+class BruteForceGeneral:
     """
-    Solve the *toy* variant of 2E-EVRP in which
-        • one depot exists          (Type == 'd')
-        • every customer is visited once
-        • objective = shortest Euclidean distance
-    The algorithm enumerates *all* permutations of the
-    customer set, so it is feasible only for n ≤ 10-11.
+    Exhaustively tries every possible *order* in which the customers
+    assigned to a satellite can be visited by the EV that belongs to
+    that satellite.
+
+    • Customer → Satellite assignment:   nearest satellite
+    • LV routes:  one per satellite     D → S → D
+    • EV routes:  one per satellite     S → C* → S
+
+    Warning:  combinatorial explosion – only use for very tiny data
+    sets (≤ 8 customers per satellite is a good rule of thumb).
     """
 
-    # -----------------------------------------------------
-    # public API
-    # -----------------------------------------------------
-    def solve(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Parameters
-        ----------
-        data : dict
-            Output of the Parser class (“instance data”).
+    # ───────────────────────────────────────────────────────────────
+    def solve(self, instance: Dict[str, Any]) -> Dict[str, Any]:
+        evaluator = Evaluator(instance)
+        depot = self._single(instance["depots"], "depot")
 
-        Returns
-        -------
-        dict with keys
-        • 'best_cost'   : float
-        • 'best_route'  : list of node-ids  (starting/ending at depot)
-        • 'evaluated'   : number of permutations inspected
-        """
+        # -----------------------------------------------------------
+        # 1. assign every customer to its nearest satellite
+        # -----------------------------------------------------------
+        sat_of_cust: Dict[str, str] = {}
+        sat_coords = {s: (instance["nodes"][s]["x"], instance["nodes"][s]["y"])
+                      for s in instance["satellites"]}
 
-        depot_id = self._get_single_depot(data)
-        customers = data["customers"]
-        coords = {nid: (data["nodes"][nid]["x"], data["nodes"][nid]["y"])
-                  for nid in [depot_id] + customers}
+        for cid in instance["customers"]:
+            cx, cy = instance["nodes"][cid]["x"], instance["nodes"][cid]["y"]
+            best_s = min(sat_coords,
+                         key=lambda s: hypot(cx - sat_coords[s][0],
+                                             cy - sat_coords[s][1]))
+            sat_of_cust[cid] = best_s
 
-        # -------------------------------------------------
-        # Pre-compute distance matrix (symmetric Euclidean)
-        # -------------------------------------------------
-        dist = {}
-        for i in coords:
-            xi, yi = coords[i]
-            dist[i] = {}
-            for j in coords:
-                xj, yj = coords[j]
-                dist[i][j] = sqrt((xi - xj) ** 2 + (yi - yj) ** 2)
+        customers_by_sat = defaultdict(list)
+        for c, s in sat_of_cust.items():
+            customers_by_sat[s].append(c)
 
-        # -------------------------------------------------
-        # brute-force enumeration
-        # -------------------------------------------------
+        # -----------------------------------------------------------
+        # 2. pre-compute all permutations per satellite
+        # -----------------------------------------------------------
+        perms_by_sat: Dict[str, List[Tuple[str, ...]]] = {}
+        for s, clist in customers_by_sat.items():
+            perms_by_sat[s] = list(permutations(clist)) or [()]   # [] for satellites without customers
+
+        # -----------------------------------------------------------
+        # 3. cartesian product over satellites  (gigantic!)
+        # -----------------------------------------------------------
+        sat_ids = list(perms_by_sat.keys())
+        iterator = product(*(perms_by_sat[s] for s in sat_ids))
+
         best_cost = float("inf")
-        best_route: List[str] = []
+        best_solution = None
         evaluated = 0
 
-        for perm in permutations(customers):
+        for orders in iterator:
             evaluated += 1
-            route = (depot_id,) + perm + (depot_id,)
-            cost = sum(dist[route[k]][route[k + 1]] for k in range(len(route) - 1))
-            if cost < best_cost:
-                best_cost = cost
-                best_route = list(route)
 
-        return {"best_cost": best_cost,
-                "best_route": best_route,
-                "evaluated": evaluated}
+            # build one LV + one EV route per satellite
+            lv_routes = [[depot, s, depot] for s in sat_ids]
+            ev_routes = {
+                s: [[s, *orders[idx], s]]      # idx matches sat_ids order
+                for idx, s in enumerate(sat_ids)
+            }
+            sol = Solution(lv_routes=lv_routes, ev_routes=ev_routes)
 
-    # -----------------------------------------------------
-    # private helpers
-    # -----------------------------------------------------
+            res = evaluator.evaluate(sol)
+            if res["feasible"] and res["cost"] < best_cost:
+                best_cost = res["cost"]
+                best_solution = sol
+
+        return {
+            "best_cost": best_cost,
+            "best_solution": best_solution,
+            "evaluated": evaluated,
+            "enumeration_size": self._enum_size(perms_by_sat),
+        }
+
+    # ───────────────────────────────────────────────────────────────
+    # helpers
+    # ───────────────────────────────────────────────────────────────
     @staticmethod
-    def _get_single_depot(data: Dict[str, Any]) -> str:
-        depots = data.get("depots", [])
-        if not depots:
-            raise ValueError("No depot defined in instance.")
-        if len(depots) > 1:
-            raise ValueError("BruteForce solver works only with ONE depot.")
-        return depots[0]
+    def _single(lst, what):
+        if not lst:
+            raise ValueError(f"No {what} found in instance.")
+        if len(lst) > 1:
+            # If more than one depot, pick the first for this toy solver
+            print(f"Warning: Multiple {what}s found – using '{lst[0]}'.")
+        return lst[0]
+
+    @staticmethod
+    def _enum_size(perms_by_sat) -> int:
+        n = 1
+        for p in perms_by_sat.values():
+            n *= len(p)
+        return n
