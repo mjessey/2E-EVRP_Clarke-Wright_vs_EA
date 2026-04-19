@@ -47,7 +47,7 @@ def main() -> None:
         sys.exit(1)
 
     # 3) solve -------------------------------------------------------
-    solver = BruteForceGeneral()
+    solver = BruteForce()
     result = solver.solve(data)
 
     best_cost = result["best_cost"]

@@ -18,7 +18,7 @@ from typing import Dict, Any, List, Tuple
 from core.evaluator import Evaluator, Solution
 
 
-class BruteForceGeneral:
+class BruteForce:
     """
     Exhaustively tries every possible *order* in which the customers
     assigned to a satellite can be visited by the EV that belongs to
