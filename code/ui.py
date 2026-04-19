@@ -76,6 +76,12 @@ class UI:
         sy = self.H - (self.margin + (y - self.y_min) * self.scale)  # flip y-axis
         return int(sx), int(sy)
 
+    def _screen_to_world(self, sx: int, sy: int) -> Tuple[float, float]:
+        """Inverse of _world_to_screen (returns cartesian coords)."""
+        x = (sx - self.margin) / self.scale + self.x_min
+        y = (self.H - sy - self.margin) / self.scale + self.y_min
+        return x, y
+
     # --------------------------------------------------------------
     def run(self) -> None:
         """Main event loop."""
@@ -99,6 +105,7 @@ class UI:
         self._draw_grid()
         self._draw_nodes()
         self._draw_hover_tooltip()
+        self._draw_mouse_coordinates()
 
     # --------------------------------------------------------------
     def _draw_grid(self):
@@ -177,3 +184,13 @@ class UI:
             f"TW: {n['ReadyTime']} – {n['DueDate']}",
             f"Service  : {n['ServiceTime']}",
         ]
+
+    def _draw_mouse_coordinates(self) -> None:
+        mx, my = pg.mouse.get_pos()
+        wx, wy = self._screen_to_world(mx, my)
+        txt = f"({wx:.1f}, {wy:.1f})"
+        surf = self.font.render(txt, True, (0, 0, 0))
+        # blit with a tiny dark-gray background for readability
+        bg_rect = surf.get_rect(topleft=(8, 8)).inflate(4, 2)
+        pg.draw.rect(self.screen, (220, 220, 220), bg_rect)
+        self.screen.blit(surf, (10, 9))
