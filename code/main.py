@@ -7,8 +7,8 @@
 import sys
 from pathlib import Path
 
-from parser import Parser   # <- your Parser
-from ui import UI        # <- PyGame viewer
+from core.parser import Parser   # <- your Parser
+from gui.ui import GUI        # <- PyGame viewer
 
 
 def ask_for_path() -> Path:
@@ -53,7 +53,7 @@ def main() -> None:
     # -----------------------------------------------------------------
     # 3) launch the viewer
     # -----------------------------------------------------------------
-    UI(data).run()
+    GUI(data).run()
 
 
 if __name__ == "__main__":

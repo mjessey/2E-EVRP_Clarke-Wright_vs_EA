@@ -15,7 +15,7 @@ from collections import defaultdict
 from math import hypot, factorial
 from typing import Dict, Any, List, Tuple
 
-from evaluator import Evaluator, Solution
+from core.evaluator import Evaluator, Solution
 
 
 class BruteForceGeneral:
