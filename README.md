@@ -36,8 +36,7 @@ To run, just do:
 ```
 $ python3 code/main.py
 ```
-```
-```
+The program will then prompt you to enter a file path (which should be a .txt file in data/) and to select which algorithm you want to use.
 
 ## File Structure
 ```
