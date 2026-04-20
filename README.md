@@ -32,17 +32,61 @@ The Two-Echelon Electric Vehicle Routing Problem (2E-EVRP) is a variation of the
 - **Why Include This**:
 
 ## Usage
+To run, just do:
+```
+$ python3 code/main.py
+```
+```
+```
 
 ## File Structure
+```
+2E-EVRP_Clarke-Wright_vs_EA/
+├── code/
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── evaluator.py
+│   │   └── parser.py
+│   ├── gui/
+│   │   ├── __init__.py
+│   │   └── gui.py
+│   ├── solvers/
+│   │   ├── __init__.py
+│   │   ├── brute_force.py
+│   │   └── clarke_wright.py
+│   └── main.py
+├── data/
+│   ├── Customer_5/
+│   │   └── *_C5x_n.txt
+│   ├── Customer_10/
+│   │   └── *_C10x_n.txt
+│   ├── Customer_15/
+│   │   └── *_C15x_n.txt
+│   ├── Customer_50/
+│   │   └── *_C50x_n.txt
+│   └── Customer_100/
+│       └── *_C100x_n.txt
+├── graphs/
+├── references/
+├── report/
+├── slides/
+├── .gitignore
+├── LICENSE
+├── README.md
+└── requirements.txt
+```
 
 ## Dataset
-The dataset for this project can be found here: https://github.com/manilakbay/2E-EVRP-Instances/tree/main
+The dataset for this project can be found here: https://github.com/manilakbay/2E-EVRP-Instances/tree/main <br \>
 We use the Type_x instance and compare our algorithms on all input sizes (# customers: 5, 10, 15, 50, 100).
 
 ## Generative AI Usage Disclosure
+The following AI tools were used to assist in writing code:
+- o3
+- Claude Sonnet 4.6
 
 ## Contributors
-- Will Hemphill
+- [Will Hemphill](https://github.com/will-hemphill)
 - [Max Jessey](https://github.com/mjessey)
 - [Preston Page](https://github.com/MaybePreston)
 - [Braylon Trail](https://github.com/batrail)
