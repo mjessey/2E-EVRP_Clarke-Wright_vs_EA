@@ -11,10 +11,13 @@ import sys
 from pathlib import Path
 
 from core.parser import Parser
-from solvers.brute_force import BruteForce
-from gui.gui import GUI
-from solvers.clarke_wright import ClarkeWright
 from core.evaluator import Evaluator
+
+from solvers.brute_force import BruteForce
+from solvers.clarke_wright import ClarkeWright
+from solvers.neighborhood_search import ALNS
+
+from gui.gui import GUI
 
 
 # -------------------------------------------------------------------
@@ -31,8 +34,8 @@ def ask_for_path() -> Path:
 
 def ask_for_solver() -> str:
     while True:
-        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright: ")
-        if p in {"1", "2"}:
+        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright\n3: Adaptive Large Neighborhood Search: ")
+        if p in {"1", "2", "3"}:
             return p
         else:
             print(f"'{p}' is not a valid option - try again.\n")
@@ -61,6 +64,8 @@ def main() -> None:
         solver = BruteForce()
     elif solver_num == "2":
         solver = ClarkeWright()
+    elif solver_num == "3":
+        solver = ALNS()
 
     result = solver.solve(data)
 
