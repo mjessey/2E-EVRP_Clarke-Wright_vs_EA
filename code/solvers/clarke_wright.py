@@ -186,9 +186,12 @@ class _CWSolver:
                     if load > self.EV_CAP:
                         continue
                     candidate = self._ensure_battery(sat, candidate)
-                    if candidate is not None:
-                        merged = (candidate, r_tail, r_head)
-                        break
+                    if candidate is None:
+                        continue
+                    if not self._time_windows_ok(candidate):
+                        continue
+                    merged = (candidate, r_tail, r_head)
+                    break
 
             if merged is None:
                 continue
@@ -319,6 +322,28 @@ class _CWSolver:
                 return None
             r = best_r
         return r if self._simulate_battery(r) else None
+
+    def _time_windows_ok(self, route: List[str]) -> bool:
+        time = 0.0
+        soc  = self.BAT_CAP
+        prev = route[0]
+        for nxt in route[1:]:
+            d     = self.dist[prev, nxt]
+            time += d / self.SPEED
+            soc  -= d
+            ntype = self.data["nodes"][nxt]["Type"]
+            if ntype == "f":
+                time += (self.BAT_CAP - soc) * self.INV_G
+                soc   = self.BAT_CAP
+            elif ntype == "c":
+                node = self.data["nodes"][nxt]
+                if time < node["ReadyTime"]:
+                    time = node["ReadyTime"]
+                if time > node["DueDate"]:
+                    return False
+                time += node["ServiceTime"]
+            prev = nxt
+        return True
 
     def _simulate_battery_partial(
         self, route: List[str], up_to: int
