@@ -14,6 +14,7 @@ from core.parser import Parser
 from solvers.brute_force import BruteForce
 from gui.gui import GUI
 from solvers.clarke_wright import ClarkeWright
+from core.evaluator import Evaluator
 
 
 # -------------------------------------------------------------------
@@ -67,10 +68,15 @@ def main() -> None:
     if best_sol is None:
         print("No feasible solution found.")
         return
+    
+    ev = Evaluator(data, check_sat_inventory=False)
+    res = ev.evaluate(best_sol)
 
     print("-------------------------------------------------")
     print(f"#EVs used        : {result['evs']}")
     print(f"Total distance   : {result['distance']:.2f}")
+    print(f"Feasible         : {res['feasible']}")
+    print(f"Violations       : {res['violations']}")
 
     # optional fields – print only if they exist
     if "routes" in result:
