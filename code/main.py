@@ -13,6 +13,7 @@ from pathlib import Path
 from core.parser import Parser
 from solvers.brute_force import BruteForce
 from gui.gui import GUI
+from solvers.clarke_wright import ClarkeWright
 
 
 # -------------------------------------------------------------------
@@ -27,6 +28,13 @@ def ask_for_path() -> Path:
             return path
         print(f"'{p}' is not a valid file – try again.\n")
 
+def ask_for_solver() -> str:
+    while True:
+        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright: ")
+        if p in {"1", "2"}:
+            return p
+        else:
+            print(f"'{p}' is not a valid option - try again.\n")
 
 # -------------------------------------------------------------------
 def main() -> None:
@@ -47,7 +55,12 @@ def main() -> None:
         sys.exit(1)
 
     # 3) solve -------------------------------------------------------
-    solver = BruteForce()
+    solver_num = ask_for_solver()
+    if solver_num == "1":
+        solver = BruteForce()
+    elif solver_num == "2":
+        solver = ClarkeWright()
+
     result = solver.solve(data)
 
     best_sol = result["solution"]
