@@ -71,6 +71,8 @@ class Evaluator:
         self.chk_stock = check_sat_inventory
         self.chk_tw    = check_time_windows
 
+        self.PENALTY_EV = 10_000  # > theoretical max distance of one EV
+
         p = instance["params"]
         self.LV_CAP   = p["L"]
         self.EV_CAP   = p["C"]
@@ -218,7 +220,13 @@ class Evaluator:
                         break
 
         feasible = not any(vio.values())
-        return dict(cost=cost, feasible=feasible, violations=vio)
+        extra = self.PENALTY_EV * self._count_evs(sol)
+        return dict(
+            cost          = cost,
+            cost_with_M   = cost + extra,
+            feasible      = feasible,
+            violations    = vio,
+        )
 
     # ----------------------------------------------------------------
     # helper functions
@@ -238,3 +246,6 @@ class Evaluator:
             and route[0] == route[-1]
             and route[0][0].lower() == want_type
         )
+
+    def _count_evs(self, sol: Solution) -> int:
+        return sum(len(rlist) for rlist in sol.ev_routes.values())

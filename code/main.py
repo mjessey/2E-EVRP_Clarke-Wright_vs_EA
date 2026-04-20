@@ -50,16 +50,23 @@ def main() -> None:
     solver = BruteForce()
     result = solver.solve(data)
 
-    best_cost = result["best_cost"]
-    best_sol  = result["best_solution"]
-
-    print("---------------------------------------------------")
+    best_sol = result["solution"]
     if best_sol is None:
-        print("No feasible solution found by brute force.")
-    else:
-        print(f"Optimal cost : {best_cost:.3f}")
-        print(f"Permutations inspected : {result['evaluated']}")
-    print("---------------------------------------------------")
+        print("No feasible solution found.")
+        return
+
+    print("-------------------------------------------------")
+    print(f"#EVs used        : {result['evs']}")
+    print(f"Total distance   : {result['distance']:.2f}")
+
+    # optional fields – print only if they exist
+    if "routes" in result:
+        print(f"Routes enumerated: {result['routes']}")
+    if "milp_vars" in result:
+        print(f"MILP variables   : {result['milp_vars']}")
+    if "milp_time" in result and result["milp_time"] is not None:
+        print(f"MILP solve time  : {result['milp_time']:.3f} s")
+    print("-------------------------------------------------")
 
     # 4) visualise ---------------------------------------------------
     GUI(data, solution=best_sol).run()

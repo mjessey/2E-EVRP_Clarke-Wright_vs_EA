@@ -74,11 +74,17 @@ class GUI:
             for nid, n in data["nodes"].items()
         }
 
-        # give each satellite a unique colour for its EV routes
-        self.ev_colour_of_sat = {
-            s: self.EV_PALETTE[i % len(self.EV_PALETTE)]
-            for i, s in enumerate(data["satellites"])
-        }
+        # -----------------------------------------------
+        # one distinct colour *per EV route*
+        # -----------------------------------------------
+        self.route_colours = {}
+        if solution:
+            palette = self.EV_PALETTE
+            colour_cursor = 0
+            for sat, rlist in solution.ev_routes.items():
+                for r in rlist:
+                    self.route_colours[id(r)] = palette[colour_cursor % len(palette)]
+                    colour_cursor += 1
 
     # ------------------------------------------------------------------
     #  public
@@ -126,9 +132,9 @@ class GUI:
                           self.COLOURS["lv_route"], False, pts, 4)
 
         # -------- EV routes (second echelon) --------------------------
-        for sat, routes in self.solution.ev_routes.items():
-            col = self.ev_colour_of_sat.get(sat, (100, 100, 100))
+        for routes in self.solution.ev_routes.values():
             for r in routes:
+                col = self.route_colours[id(r)]
                 pts = [self.pos_px[nid] for nid in r]
                 pg.draw.lines(self.screen, col, False, pts, 2)
 
