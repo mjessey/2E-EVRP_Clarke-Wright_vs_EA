@@ -168,7 +168,9 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     print("\n-------------------------------------------------")
     print(f"Detailed results : {result['detail_csv']}")
     print(f"Summary results  : {result['summary_csv']}")
-    print(f"Runtime plot     : {result['plot_path']}")
+    print(f"Runtime plot     : {result['runtime_plot_path']}")
+    print(f"Distance plot    : {result['distance_plot_path']}")
+    print(f"EV usage plot    : {result['evs_plot_path']}")
     print("-------------------------------------------------")
 
 
