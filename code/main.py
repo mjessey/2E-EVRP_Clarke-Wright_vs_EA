@@ -19,7 +19,7 @@ from gui.gui import GUI
 from solvers.brute_force import BruteForce
 from solvers.clarke_wright import ClarkeWright
 from solvers.neighborhood_search import ALNS
-from solvers.memetic.memetic import MemeticAlgorithm
+from solvers.memetic import MemeticAlgorithm
 
 
 # -------------------------------------------------------------------
@@ -93,11 +93,11 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     if solver_num == "1":
         solver_name = "BruteForce"
     elif solver_num == "2":
-        solver = ClarkeWright()
+        solver_name = "Clark-Wright"
     elif solver_num == "3":
-        solver = ALNS()
+        solver_name = "ALNS"
     elif solver_num == "4":
-        solver = MemeticAlgorithm()
+        solver_name = "Memetic"
 
 
     timeout_sec = ask_for_timeout(

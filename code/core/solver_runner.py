@@ -17,11 +17,15 @@ from typing import Dict, Any, Optional
 from core.evaluator import Solution
 from solvers.brute_force import BruteForce
 from solvers.clarke_wright import ClarkeWright
+from solvers.neighborhood_search import ALNS
+from solvers.memetic import MemeticAlgorithm
 
 
 SOLVER_FACTORIES = {
     "BruteForce": BruteForce,
     "ClarkeWright": ClarkeWright,
+    "ALNS": ALNS,
+    "Memetic": MemeticAlgorithm,
 }
 
 

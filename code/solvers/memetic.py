@@ -57,9 +57,9 @@ import random
 from typing import Dict, Any, List, Optional, Tuple
 
 from core.evaluator import Evaluator, Solution
-from solvers.memetic.k_pseudo_greedy       import KPseudoGreedy
-from solvers.memetic.adaptive_local_search import AdaptiveLocalSearch
-from solvers.memetic.backbone_crossover    import BackboneCrossover
+from solvers.memetic_helpers.k_pseudo_greedy       import KPseudoGreedy
+from solvers.memetic_helpers.adaptive_local_search import AdaptiveLocalSearch
+from solvers.memetic_helpers.backbone_crossover    import BackboneCrossover
 
 
 class MemeticAlgorithm:
