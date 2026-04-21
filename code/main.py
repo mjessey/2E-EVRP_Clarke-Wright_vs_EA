@@ -19,6 +19,7 @@ from gui.gui import GUI
 from solvers.brute_force import BruteForce
 from solvers.clarke_wright import ClarkeWright
 from solvers.neighborhood_search import ALNS
+from solvers.memetic.memetic import MemeticAlgorithm
 
 
 # -------------------------------------------------------------------
@@ -47,8 +48,8 @@ def ask_for_path() -> Path:
 
 def ask_for_solver() -> str:
     while True:
-        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright\n3: Adaptive Large Neighborhood Search: ")
-        if p in {"1", "2", "3"}:
+        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright\n3: Adaptive Large Neighborhood Search:\n4: memetic: ")
+        if p in {"1", "2", "3", "4"}:
             return p
         print(f"'{p}' is not a valid option - try again.\n")
 
@@ -95,6 +96,9 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
         solver = ClarkeWright()
     elif solver_num == "3":
         solver = ALNS()
+    elif solver_num == "4":
+        solver = MemeticAlgorithm()
+
 
     timeout_sec = ask_for_timeout(
         "Solver timeout in seconds for this instance "
