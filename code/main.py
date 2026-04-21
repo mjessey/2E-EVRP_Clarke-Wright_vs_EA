@@ -16,10 +16,6 @@ from core.benchmark import benchmark_algorithms
 from core.solver_runner import solve_with_optional_timeout
 
 from gui.gui import GUI
-from solvers.brute_force import BruteForce
-from solvers.clarke_wright import ClarkeWright
-from solvers.neighborhood_search import ALNS
-from solvers.memetic import MemeticAlgorithm
 
 
 # -------------------------------------------------------------------
@@ -93,7 +89,7 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     if solver_num == "1":
         solver_name = "BruteForce"
     elif solver_num == "2":
-        solver_name = "Clark-Wright"
+        solver_name = "ClarkeWright"
     elif solver_num == "3":
         solver_name = "ALNS"
     elif solver_num == "4":
@@ -165,7 +161,7 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     result = benchmark_algorithms(
         data_root=data_dir,
         graphs_dir=graphs_dir,
-        solver_names=["BruteForce", "ClarkeWright"],
+        solver_names=["ClarkeWright", "ALNS", "Memetic"],
         timeout_sec=timeout_sec,
     )
 
