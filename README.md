@@ -53,26 +53,26 @@ The program will then prompt you to enter a file path (which should be a .txt fi
 │   │   └── gui.py
 │   ├── solvers/
 │   │   ├── __init__.py
-│   │   ├── memetic/
+│   │   ├── memetic_helpers/
 │   │   │   ├── adaptive_local_search.py
 │   │   │   ├── backbone_crossover.py
-│   │   │   ├── k_pseudo_greedy.py
-│   │   │   └── memetic.py
+│   │   │   └── k_pseudo_greedy.py
 │   │   ├── brute_force.py
 │   │   ├── clarke_wright.py
+│   │   ├── memetic.py
 │   │   └── neighborhood_search.py
 │   └── main.py
 ├── data/
 │   ├── Customer_5/
-│   │   └── *_C5x_n.txt
+│   │   └── *.txt
 │   ├── Customer_10/
-│   │   └── *_C10x_n.txt
+│   │   └── *.txt
 │   ├── Customer_15/
-│   │   └── *_C15x_n.txt
+│   │   └── *.txt
 │   ├── Customer_50/
-│   │   └── *_C50x_n.txt
+│   │   └── *.txt
 │   └── Customer_100/
-│       └── *_C100x_n.txt
+│       └── *.txt
 ├── graphs/
 ├── references/
 ├── report/
