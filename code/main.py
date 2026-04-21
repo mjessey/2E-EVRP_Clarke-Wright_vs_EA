@@ -23,8 +23,8 @@ def ask_for_mode() -> str:
     while True:
         p = input(
             "Choose mode:\n"
-            "1: solve one instance\n"
-            "2: benchmark algorithms\n> "
+            "1: Solve one instance\n"
+            "2: Benchmark Clarke-Wright vs ALNS\n> "
         ).strip()
         if p in {"1", "2"}:
             return p
@@ -161,7 +161,7 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     result = benchmark_algorithms(
         data_root=data_dir,
         graphs_dir=graphs_dir,
-        solver_names=["ClarkeWright", "ALNS", "Memetic"],
+        solver_names=["ClarkeWright", "ALNS"],
         timeout_sec=timeout_sec,
     )
 

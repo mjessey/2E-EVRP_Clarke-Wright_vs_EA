@@ -23,7 +23,7 @@ from core.parser import Parser
 from core.solver_runner import solve_with_optional_timeout
 
 
-DEFAULT_SOLVER_NAMES = ["ClarkeWright", "ALNS", "Memetic"]
+DEFAULT_SOLVER_NAMES = ["ClarkeWright", "ALNS"]
 
 
 def _write_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: List[str]) -> None:
