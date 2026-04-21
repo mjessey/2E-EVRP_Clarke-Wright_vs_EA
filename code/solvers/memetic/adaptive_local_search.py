@@ -115,11 +115,10 @@ class AdaptiveLocalSearch:
     #  Public interface
     # ============================================================
 
-    def run(self, sol: Solution) -> Solution:
-        """
-        Run adaptive local search on sol.
-        Returns the best solution found.
-        """
+    def run(self, sol: Solution, time_limit: float = 30.0, quick: bool = False) -> Solution:
+        import time
+        t_start = time.time()
+        n_star          = 1 if quick else self.N_STAR
         scores          = [self.SC0] * 8
         current         = copy.deepcopy(sol)
         current_cost    = self._cost(current)
@@ -127,7 +126,9 @@ class AdaptiveLocalSearch:
         best_cost       = current_cost
         no_improve_iter = 0
 
-        while no_improve_iter < self.N_STAR:
+        while no_improve_iter < n_star:
+            if time.time() - t_start > time_limit:
+                break
             # active move set resets each outer iteration
             active = list(range(8))
             improved_this_pass = False

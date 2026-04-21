@@ -76,12 +76,24 @@ class MemeticAlgorithm:
     POP_SIZE   = 15       # np:    population size
     DELTA      = 0.7      # δ:     quality vs diversity balance
     K_GREEDY   = 3        # k:     k-Pseudo Greedy candidates
-    MAX_TIME   = 60.0     # seconds: stopping criterion
+    MAX_TIME   = 180.0     # seconds: stopping criterion
 
     # ------------------------------------------------------------
     def solve(self, instance: Dict[str, Any]) -> Dict[str, Any]:
         self.data    = instance
         self.ev      = Evaluator(instance, check_sat_inventory=False)
+
+        self.EV_CAP  = instance["params"]["C"]
+        self.BAT_CAP = instance["params"]["Q"]
+        self.SPEED   = instance["params"]["v"]
+        self.INV_G   = instance["params"]["g"]
+        coords = {n: (instance["nodes"][n]["x"], instance["nodes"][n]["y"])
+                for n in instance["nodes"]}
+        self.dist = {
+            (i, j): math.hypot(coords[i][0] - coords[j][0],
+                            coords[i][1] - coords[j][1])
+            for i in coords for j in coords
+        }
 
         # initialise component solvers
         greedy    = KPseudoGreedy(instance, k=self.K_GREEDY)
@@ -100,7 +112,14 @@ class MemeticAlgorithm:
 
         # ---- 2. improve each individual -------------------------
         print("  [MA] Running local search on initial population...")
-        population = [local.run(s) for s in population]
+        for idx, s in enumerate(population):
+            improved   = local.run(s, time_limit=2.0)
+            eliminated = self._try_eliminate_route(improved)
+            if eliminated is not None:
+                improved = eliminated
+            population[idx] = improved
+            cost = self._cost(improved)
+            print(f"  [MA] Individual {idx+1}/15 cost: {cost:.2f}")
 
         costs = [self._cost(s) for s in population]
         best_idx  = min(range(len(population)), key=lambda i: costs[i])
@@ -108,6 +127,7 @@ class MemeticAlgorithm:
         best_cost = costs[best_idx]
 
         print(f"  [MA] Initial best cost: {best_cost:.2f}")
+        print(f"  [MA] Population costs: {[round(c, 2) for c in costs]}")
 
         # ---- 3. main loop ---------------------------------------
         generation = 0
@@ -125,9 +145,30 @@ class MemeticAlgorithm:
             if offspring is None:
                 continue
 
-            # local search on offspring
-            offspring = local.run(offspring)
+            parent_cost              = min(self._cost(pa), self._cost(pb))
+            offspring_cost_before_ls = self._cost(offspring)
+            offspring      = local.run(offspring, time_limit=5.0, quick=True)
+            eliminated     = self._try_eliminate_route(offspring)
+            if eliminated is not None:
+                offspring  = eliminated
             offspring_cost = self._cost(offspring)
+            if generation % 5 == 0 and offspring_cost >= best_cost:
+                pa_stripped = self._strip_smallest_route(pa)
+                if pa_stripped is not None:
+                    stripped_offspring = crossover.crossover(pa_stripped, pb)
+                    if stripped_offspring is not None:
+                        stripped_offspring = local.run(
+                            stripped_offspring, time_limit=5.0
+                        )
+                        stripped_cost = self._cost(stripped_offspring)
+                        if stripped_cost < offspring_cost:
+                            offspring      = stripped_offspring
+                            offspring_cost = stripped_cost
+
+                        print(f"  [MA] Gen {generation:>4} | "
+                            f"parents={parent_cost:.2f} | "
+                            f"pre-LS={offspring_cost_before_ls:.2f} | "
+                            f"post-LS={offspring_cost:.2f}")
 
             # update global best
             if offspring_cost < best_cost:
@@ -199,11 +240,11 @@ class MemeticAlgorithm:
         d_min    = min(d_vals)
 
         def goodness(idx: int) -> float:
-            quality   = ((f_max - f_vals[idx])
-                         / (f_max - f_min + 1))
-            diversity = ((d_vals[idx] - d_min)
-                         / (d_max - d_min + 1))
-            return self.DELTA * quality + (1 - self.DELTA) * diversity
+            cost_spread = max(all_costs) - min(all_costs)
+            delta       = 0.3 if cost_spread < 1000 else self.DELTA
+            quality     = (f_max - all_costs[idx]) / (f_max - f_min + 1)
+            diversity   = (distances[idx] - d_min) / (d_max - d_min + 1)
+            return delta * quality + (1 - delta) * diversity
 
         scores = [goodness(i) for i in range(len(all_sols))]
 
@@ -265,6 +306,117 @@ class MemeticAlgorithm:
             prev, curr = curr, [0] * (n + 1)
 
         return prev[n]
+    def _strip_smallest_route(self, sol: Solution) -> Optional[Solution]:
+        min_custs = float("inf")
+        min_sat   = None
+        min_ridx  = None
+        for sat, routes in sol.ev_routes.items():
+            for ridx, r in enumerate(routes):
+                n = sum(1 for n in r
+                        if self.data["nodes"][n]["Type"] == "c")
+                if n < min_custs:
+                    min_custs = n
+                    min_sat   = sat
+                    min_ridx  = ridx
+        if min_sat is None:
+            return None
+        new_ev = copy.deepcopy(sol.ev_routes)
+        new_ev[min_sat].pop(min_ridx)
+        return Solution(lv_routes=sol.lv_routes, ev_routes=new_ev)
+    
+    def _try_eliminate_route(self, sol: Solution) -> Optional[Solution]:
+        """
+        Find the route with fewest customers, remove all its customers,
+        and greedily reinsert them into other routes.
+        Returns improved solution if successful, None otherwise.
+        """
+        # find smallest route
+        min_custs = float("inf")
+        min_sat   = None
+        min_ridx  = None
+        for sat, routes in sol.ev_routes.items():
+            for ridx, r in enumerate(routes):
+                n = sum(1 for n in r
+                        if self.data["nodes"][n]["Type"] == "c")
+                if 0 < n < min_custs:
+                    min_custs = n
+                    min_sat   = sat
+                    min_ridx  = ridx
+
+        if min_sat is None:
+            return None
+
+        # remove the route
+        removed = [
+            n for n in sol.ev_routes[min_sat][min_ridx]
+            if self.data["nodes"][n]["Type"] == "c"
+        ]
+        new_ev = copy.deepcopy(sol.ev_routes)
+        new_ev[min_sat].pop(min_ridx)
+        if not new_ev[min_sat]:
+            del new_ev[min_sat]
+        partial = Solution(lv_routes=sol.lv_routes, ev_routes=new_ev)
+
+        # try to reinsert all removed customers
+        for cust in removed:
+            best_cost = float("inf")
+            best_sat  = best_ridx = best_pos = None
+            for sat, routes in partial.ev_routes.items():
+                for r_idx, r in enumerate(routes):
+                    for pos in range(1, len(r)):
+                        candidate = r[:pos] + [cust] + r[pos:]
+                        load = sum(
+                            self.data["nodes"][n]["DeliveryDemand"]
+                            for n in candidate
+                            if self.data["nodes"][n]["Type"] == "c"
+                        )
+                        if load > self.EV_CAP:
+                            continue
+                        if not self._route_feasible_check(candidate, sat):
+                            continue
+                        cost = sum(
+                            self.dist[a, b]
+                            for a, b in zip(candidate, candidate[1:])
+                        )
+                        if cost < best_cost:
+                            best_cost = cost
+                            best_sat  = sat
+                            best_ridx = r_idx
+                            best_pos  = pos
+
+            if best_sat is None:
+                return None  # couldn't reinsert — elimination failed
+            r = partial.ev_routes[best_sat][best_ridx]
+            partial.ev_routes[best_sat][best_ridx] = (
+                r[:best_pos] + [cust] + r[best_pos:]
+            )
+
+        return partial
+
+
+    def _route_feasible_check(self, route: List[str], sat: str) -> bool:
+        time = 0.0
+        soc  = self.BAT_CAP
+        prev = route[0]
+        for nxt in route[1:]:
+            d     = self.dist[prev, nxt]
+            time += d / self.SPEED
+            soc  -= d
+            if soc < -1e-9:
+                return False
+            ntype = self.data["nodes"][nxt]["Type"]
+            if ntype == "f":
+                time += (self.BAT_CAP - soc) * self.INV_G
+                soc   = self.BAT_CAP
+            elif ntype == "c":
+                node = self.data["nodes"][nxt]
+                if time < node["ReadyTime"]:
+                    time = node["ReadyTime"]
+                if time > node["DueDate"]:
+                    return False
+                time += node["ServiceTime"]
+            prev = nxt
+        return True
 
     # ============================================================
     #  Cost helper
