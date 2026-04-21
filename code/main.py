@@ -11,12 +11,14 @@ from typing import Optional
 
 from core.parser import Parser
 from core.evaluator import Evaluator
+
 from core.benchmark import benchmark_algorithms
 from core.solver_runner import solve_with_optional_timeout
 
 from gui.gui import GUI
 from solvers.brute_force import BruteForce
 from solvers.clarke_wright import ClarkeWright
+from solvers.neighborhood_search import ALNS
 
 
 # -------------------------------------------------------------------
@@ -45,12 +47,8 @@ def ask_for_path() -> Path:
 
 def ask_for_solver() -> str:
     while True:
-        p = input(
-            "Enter which algorithm to use:\n"
-            "1: brute-force\n"
-            "2: clarke-wright\n> "
-        ).strip()
-        if p in {"1", "2"}:
+        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright\n3: Adaptive Large Neighborhood Search: ")
+        if p in {"1", "2", "3"}:
             return p
         print(f"'{p}' is not a valid option - try again.\n")
 
@@ -93,8 +91,10 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     solver_num = ask_for_solver()
     if solver_num == "1":
         solver_name = "BruteForce"
-    else:
-        solver_name = "ClarkeWright"
+    elif solver_num == "2":
+        solver = ClarkeWright()
+    elif solver_num == "3":
+        solver = ALNS()
 
     timeout_sec = ask_for_timeout(
         "Solver timeout in seconds for this instance "
