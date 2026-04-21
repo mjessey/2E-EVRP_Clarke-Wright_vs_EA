@@ -75,6 +75,7 @@ The program will then prompt you to enter a file path (which should be a .txt fi
 │       └── *.txt
 ├── graphs/
 ├── references/
+│   └── references.txt
 ├── report/
 ├── slides/
 ├── .gitignore

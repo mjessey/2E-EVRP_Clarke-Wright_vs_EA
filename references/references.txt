@@ -1,0 +1,4 @@
+2E-EVRP: https://arxiv.org/abs/1803.03628
+Clarke-Wright Savings Algorithm: https://web.mit.edu/urban_or_book/www/book/chapter6/6.4.12.html
+Adapative Large Neighborhood Search: https://www.sciencedirect.com/topics/computer-science/adaptive-large-neighborhood-search
+Memetic Algorithm for VRP: https://www.mdpi.com/2071-1050/11/21/6055
