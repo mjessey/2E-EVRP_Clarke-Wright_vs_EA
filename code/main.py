@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------
 
 import sys
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -17,8 +18,30 @@ from core.solver_runner import solve_with_optional_timeout
 
 from gui.gui import GUI
 
-
 # -------------------------------------------------------------------
+def ask_for_cpu_count() -> int:
+    available = os.cpu_count() or 1
+
+    while True:
+        p = input(
+            f"CPUs available: {available}\n"
+            f"How many CPUs/processes should be used for benchmarking? "
+            f"[default: {available}]\n> "
+        ).strip()
+
+        if not p:
+            return available
+
+        try:
+            val = int(p)
+            if 1 <= val <= available:
+                return val
+        except ValueError:
+            pass
+
+        print(f"Please enter an integer between 1 and {available}.\n")
+
+
 def ask_for_mode() -> str:
     while True:
         p = input(
@@ -153,16 +176,20 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
 def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     data_dir = ask_for_directory(project_root / "data", "Enter benchmark data directory")
+
     timeout_sec = ask_for_timeout(
         "Per-run timeout in seconds for benchmarking "
         "(press Enter for no timeout)\n> "
     )
+
+    max_workers = ask_for_cpu_count()
 
     result = benchmark_algorithms(
         data_root=data_dir,
         graphs_dir=graphs_dir,
         solver_names=["ClarkeWright", "ALNS"],
         timeout_sec=timeout_sec,
+        max_workers=max_workers,
     )
 
     print("\n-------------------------------------------------")
@@ -172,7 +199,6 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     print(f"Distance plot    : {result['distance_plot_path']}")
     print(f"EV usage plot    : {result['evs_plot_path']}")
     print("-------------------------------------------------")
-
 
 # -------------------------------------------------------------------
 def main() -> None:
@@ -202,4 +228,6 @@ def main() -> None:
 
 # -------------------------------------------------------------------
 if __name__ == "__main__":
+    import multiprocessing as mp
+    mp.freeze_support()
     main()
