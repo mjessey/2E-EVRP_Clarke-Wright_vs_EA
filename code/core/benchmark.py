@@ -1,6 +1,14 @@
 # benchmark.py
 # ---------------------------------------------------------------
 #  Benchmark algorithms on a directory of instances.
+#
+#  Supports:
+#    - benchmark-level multiprocessing:
+#        multiple instance files evaluated concurrently
+#    - solver-level multiprocessing:
+#        ParallelALNS / ParallelMemetic can use multiple islands
+#        per instance through solver_parallel_jobs
+#
 #  Saves:
 #    - graphs/runtime_comparison.png
 #    - graphs/distance_comparison.png
@@ -12,16 +20,17 @@
 from __future__ import annotations
 
 import csv
+import multiprocessing as mp
 import queue
 import re
-import multiprocessing as mp
 
 from collections import defaultdict
 from pathlib import Path
 from statistics import mean
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -29,14 +38,27 @@ from core.parser import Parser
 from core.solver_runner import solve_with_optional_timeout
 
 
-DEFAULT_SOLVER_NAMES = ["ClarkeWright", "ALNS"]
+DEFAULT_SOLVER_NAMES = [
+    "ClarkeWright",
+    "ParallelALNS",
+    "ParallelMemetic",
+]
+
+PARALLEL_SOLVER_NAMES = {
+    "ParallelALNS",
+    "ParallelMemetic",
+}
 
 
 # ===============================================================
-# CSV helpers
+#  CSV helpers
 # ===============================================================
 
-def _write_csv(path: Path, rows: List[Dict[str, Any]], fieldnames: List[str]) -> None:
+def _write_csv(
+    path: Path,
+    rows: List[Dict[str, Any]],
+    fieldnames: List[str],
+) -> None:
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -48,25 +70,31 @@ def _is_number(x: Any) -> bool:
 
 
 # ===============================================================
-# Balanced multiprocessing helpers
+#  Instance balancing helpers
 # ===============================================================
 
 def _instance_size_key(path: Path) -> str:
     """
-    Extracts a size key from paths such as:
+    Extract input-size key from paths such as:
 
         data/Customer_5/foo.txt
         data/Customer_10/bar.txt
 
-    The returned key is used only for balancing work between processes.
+    Used only for distributing similar-size instances across
+    benchmark workers.
     """
     for part in reversed(path.parts):
         match = re.search(r"Customer[_-]?(\d+)", part, flags=re.IGNORECASE)
         if match:
             return match.group(1)
 
-    # Fallback if the directory does not follow Customer_N naming.
     return path.parent.name
+
+
+def _sort_size_key(x: str) -> Any:
+    if str(x).isdigit():
+        return int(x)
+    return str(x)
 
 
 def _balanced_chunks_by_input_size(
@@ -74,20 +102,20 @@ def _balanced_chunks_by_input_size(
     num_workers: int,
 ) -> List[List[Path]]:
     """
-    Split files between workers while preserving roughly identical input-size
-    composition in every worker.
+    Split instance files across workers while giving each worker
+    approximately identical input-size composition.
 
-    Example with 5 input sizes and 300 files per size:
+    Example with 300 files for each of:
+      Customer_5, Customer_10, Customer_15, Customer_50, Customer_100
 
-        Worker 1 gets roughly:
-            5-customer files   : 300 / num_workers
-            10-customer files  : 300 / num_workers
-            15-customer files  : 300 / num_workers
-            50-customer files  : 300 / num_workers
-            100-customer files : 300 / num_workers
+    and 10 workers:
 
-    This prevents one worker from receiving mostly large instances while
-    another receives mostly small instances.
+      each worker receives about:
+        30 Customer_5
+        30 Customer_10
+        30 Customer_15
+        30 Customer_50
+        30 Customer_100
     """
     by_size: Dict[str, List[Path]] = defaultdict(list)
 
@@ -96,21 +124,19 @@ def _balanced_chunks_by_input_size(
 
     chunks: List[List[Path]] = [[] for _ in range(num_workers)]
 
-    for size_key in sorted(by_size.keys(), key=lambda x: int(x) if str(x).isdigit() else str(x)):
+    for size_key in sorted(by_size.keys(), key=_sort_size_key):
         files = sorted(by_size[size_key])
 
         for i, path in enumerate(files):
             worker_idx = i % num_workers
             chunks[worker_idx].append(path)
 
-    # Remove empty chunks if num_workers > number of files.
     chunks = [chunk for chunk in chunks if chunk]
 
-    # Keep output deterministic.
     for chunk in chunks:
         chunk.sort(
             key=lambda p: (
-                int(_instance_size_key(p)) if _instance_size_key(p).isdigit() else 10**9,
+                _sort_size_key(_instance_size_key(p)),
                 str(p),
             )
         )
@@ -120,27 +146,49 @@ def _balanced_chunks_by_input_size(
 
 def _chunk_size_counts(chunk: List[Path]) -> Dict[str, int]:
     counts: Dict[str, int] = defaultdict(int)
+
     for path in chunk:
         counts[_instance_size_key(path)] += 1
-    return dict(sorted(counts.items(), key=lambda kv: int(kv[0]) if kv[0].isdigit() else 10**9))
+
+    return dict(
+        sorted(
+            counts.items(),
+            key=lambda kv: _sort_size_key(kv[0]),
+        )
+    )
+
+
+def _effective_solver_parallel_jobs(
+    solver_name: str,
+    solver_parallel_jobs: int,
+) -> int:
+    """
+    Only the explicit parallel portfolio solvers use solver_parallel_jobs.
+    Deterministic/non-portfolio solvers run single-core per instance.
+    """
+    if solver_name in PARALLEL_SOLVER_NAMES:
+        return max(1, int(solver_parallel_jobs))
+
+    return 1
 
 
 # ===============================================================
-# Benchmark execution
+#  Benchmark execution on subset
 # ===============================================================
 
 def _benchmark_instance_subset(
     instance_files: List[Path],
     solver_names: List[str],
     timeout_sec: Optional[float],
+    solver_parallel_jobs: int = 1,
     worker_id: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
     Run benchmark on a subset of instance files.
 
-    This function is used both by:
-      - sequential benchmarking
-      - each multiprocessing worker
+    Used by:
+      - sequential benchmark mode
+      - each benchmark multiprocessing worker
     """
     detail_rows: List[Dict[str, Any]] = []
 
@@ -154,22 +202,30 @@ def _benchmark_instance_subset(
             n_customers = len(data["customers"])
 
             print(
-                f"{prefix}Instance: {instance_path.name} | customers={n_customers}",
+                f"{prefix}Instance: {instance_path.name} | "
+                f"customers={n_customers}",
                 flush=True,
             )
 
         except Exception as err:
             print(
-                f"{prefix}Instance: {instance_path.name} | PARSE ERROR: {err}",
+                f"{prefix}Instance: {instance_path.name} | "
+                f"PARSE ERROR: {err}",
                 flush=True,
             )
 
             for solver_name in solver_names:
+                effective_jobs = _effective_solver_parallel_jobs(
+                    solver_name,
+                    solver_parallel_jobs,
+                )
+
                 detail_rows.append({
                     "instance": instance_path.name,
                     "instance_path": str(instance_path),
                     "customers": "",
                     "solver": solver_name,
+                    "solver_parallel_jobs": effective_jobs,
                     "status": "parse_error",
                     "time_sec": "",
                     "solution_found": "",
@@ -181,10 +237,23 @@ def _benchmark_instance_subset(
             continue
 
         for solver_name in solver_names:
+            effective_jobs = _effective_solver_parallel_jobs(
+                solver_name,
+                solver_parallel_jobs,
+            )
+
+            print(
+                f"{prefix}  - {solver_name:<17} "
+                f"jobs={effective_jobs:<3} ... ",
+                end="",
+                flush=True,
+            )
+
             res = solve_with_optional_timeout(
                 solver_name=solver_name,
                 data=data,
                 timeout_sec=timeout_sec,
+                solver_parallel_jobs=effective_jobs,
             )
 
             if res["status"] == "ok":
@@ -196,6 +265,7 @@ def _benchmark_instance_subset(
                     "instance_path": str(instance_path),
                     "customers": n_customers,
                     "solver": solver_name,
+                    "solver_parallel_jobs": effective_jobs,
                     "status": "ok",
                     "time_sec": res["time_sec"],
                     "solution_found": solution_found,
@@ -206,16 +276,13 @@ def _benchmark_instance_subset(
 
                 if solution_found:
                     print(
-                        f"{prefix}{instance_path.name} | "
-                        f"{solver_name:<13} | "
                         f"{res['time_sec']:.3f} s | "
-                        f"dist={row['distance']} | EVs={row['evs']}",
+                        f"dist={row['distance']} | "
+                        f"EVs={row['evs']}",
                         flush=True,
                     )
                 else:
                     print(
-                        f"{prefix}{instance_path.name} | "
-                        f"{solver_name:<13} | "
                         f"{res['time_sec']:.3f} s | no solution",
                         flush=True,
                     )
@@ -226,6 +293,7 @@ def _benchmark_instance_subset(
                     "instance_path": str(instance_path),
                     "customers": n_customers,
                     "solver": solver_name,
+                    "solver_parallel_jobs": effective_jobs,
                     "status": "timeout",
                     "time_sec": res.get("time_sec", ""),
                     "solution_found": "",
@@ -234,11 +302,7 @@ def _benchmark_instance_subset(
                     "error": "",
                 }
 
-                print(
-                    f"{prefix}{instance_path.name} | "
-                    f"{solver_name:<13} | TIMEOUT",
-                    flush=True,
-                )
+                print("TIMEOUT", flush=True)
 
             else:
                 row = {
@@ -246,6 +310,7 @@ def _benchmark_instance_subset(
                     "instance_path": str(instance_path),
                     "customers": n_customers,
                     "solver": solver_name,
+                    "solver_parallel_jobs": effective_jobs,
                     "status": res.get("status", "error"),
                     "time_sec": res.get("time_sec", ""),
                     "solution_found": "",
@@ -255,8 +320,7 @@ def _benchmark_instance_subset(
                 }
 
                 print(
-                    f"{prefix}{instance_path.name} | "
-                    f"{solver_name:<13} | ERROR: {row['error']}",
+                    f"ERROR: {row['error']}",
                     flush=True,
                 )
 
@@ -271,23 +335,29 @@ def _benchmark_instance_subset(
     return detail_rows
 
 
+# ===============================================================
+#  Benchmark multiprocessing workers
+# ===============================================================
+
 def _benchmark_worker(
     worker_id: int,
     instance_files: List[Path],
     solver_names: List[str],
     timeout_sec: Optional[float],
+    solver_parallel_jobs: int,
     result_queue: mp.Queue,
 ) -> None:
     """
-    Top-level multiprocessing worker.
+    Top-level benchmark worker.
 
-    It returns only CSV-friendly result rows, not Solution objects.
+    Returns CSV-friendly result rows only.
     """
     try:
         rows = _benchmark_instance_subset(
             instance_files=instance_files,
             solver_names=solver_names,
             timeout_sec=timeout_sec,
+            solver_parallel_jobs=solver_parallel_jobs,
             worker_id=worker_id,
         )
 
@@ -312,11 +382,17 @@ def _run_parallel_benchmark(
     solver_names: List[str],
     timeout_sec: Optional[float],
     max_workers: int,
+    solver_parallel_jobs: int = 1,
 ) -> List[Dict[str, Any]]:
-    num_workers = min(max_workers, len(instance_files))
+    """
+    Run benchmark using multiple benchmark workers.
+
+    Each benchmark worker gets a balanced subset of instance sizes.
+    """
+    num_workers = min(max(1, int(max_workers)), len(instance_files))
     chunks = _balanced_chunks_by_input_size(instance_files, num_workers)
 
-    print(f"\nParallel workers           : {len(chunks)}")
+    print(f"\nParallel benchmark workers : {len(chunks)}")
 
     for i, chunk in enumerate(chunks, start=1):
         counts = _chunk_size_counts(chunk)
@@ -340,6 +416,7 @@ def _run_parallel_benchmark(
                 chunk,
                 solver_names,
                 timeout_sec,
+                solver_parallel_jobs,
                 result_queue,
             ),
         )
@@ -349,8 +426,7 @@ def _run_parallel_benchmark(
 
     messages: Dict[int, Dict[str, Any]] = {}
 
-    # Read results while processes are running. This avoids the queue pipe
-    # filling up and blocking a worker at process exit.
+    # Read while processes are running so queue pipes do not fill up.
     while len(messages) < len(processes):
         try:
             msg = result_queue.get(timeout=0.5)
@@ -363,7 +439,7 @@ def _run_parallel_benchmark(
     for proc in processes:
         proc.join()
 
-    # Drain any messages that arrived just before join.
+    # Drain messages that arrived just before join.
     while len(messages) < len(processes):
         try:
             msg = result_queue.get_nowait()
@@ -382,6 +458,7 @@ def _run_parallel_benchmark(
             continue
 
         msg = messages[i]
+
         if msg["status"] != "ok":
             worker_errors.append(
                 f"Worker {i} failed: {msg.get('error', 'unknown error')}"
@@ -402,7 +479,7 @@ def _run_parallel_benchmark(
 
 
 # ===============================================================
-# Summary and plotting
+#  Summary generation
 # ===============================================================
 
 def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -416,12 +493,18 @@ def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         solver = row["solver"]
         customers = int(row["customers"])
-        key = (solver, customers)
+        solver_parallel_jobs = int(row.get("solver_parallel_jobs", 1) or 1)
+
+        key = (
+            solver,
+            solver_parallel_jobs,
+            customers,
+        )
 
         if _is_number(row["time_sec"]):
             grouped_time[key].append(float(row["time_sec"]))
 
-        # Only meaningful if a feasible solution was found.
+        # Distance and EV count are only meaningful if a solution exists.
         if row.get("solution_found") and _is_number(row["distance"]):
             grouped_dist[key].append(float(row["distance"]))
 
@@ -430,18 +513,29 @@ def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     all_keys = sorted(
         set(grouped_time) | set(grouped_dist) | set(grouped_evs),
-        key=lambda x: (x[1], x[0]),
+        key=lambda x: (
+            x[2],  # customers
+            x[0],  # solver
+            x[1],  # solver_parallel_jobs
+        ),
     )
 
-    summary_rows = []
+    summary_rows: List[Dict[str, Any]] = []
 
-    for solver, customers in all_keys:
-        time_vals = grouped_time.get((solver, customers), [])
-        dist_vals = grouped_dist.get((solver, customers), [])
-        ev_vals = grouped_evs.get((solver, customers), [])
+    for solver, solver_parallel_jobs, customers in all_keys:
+        key = (
+            solver,
+            solver_parallel_jobs,
+            customers,
+        )
+
+        time_vals = grouped_time.get(key, [])
+        dist_vals = grouped_dist.get(key, [])
+        ev_vals = grouped_evs.get(key, [])
 
         summary_rows.append({
             "solver": solver,
+            "solver_parallel_jobs": solver_parallel_jobs,
             "customers": customers,
 
             "time_runs": len(time_vals),
@@ -463,6 +557,10 @@ def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return summary_rows
 
 
+# ===============================================================
+#  Plotting
+# ===============================================================
+
 def _plot_metric(
     summary_rows: List[Dict[str, Any]],
     y_key: str,
@@ -480,7 +578,14 @@ def _plot_metric(
         if y == "":
             continue
 
-        by_solver[row["solver"]].append(
+        jobs = int(row.get("solver_parallel_jobs", 1) or 1)
+
+        if row["solver"] in PARALLEL_SOLVER_NAMES:
+            label = f"{row['solver']} ({jobs} cores)"
+        else:
+            label = row["solver"]
+
+        by_solver[label].append(
             (
                 int(row["customers"]),
                 float(y),
@@ -501,7 +606,7 @@ def _plot_metric(
         plt.close()
         return
 
-    for solver, pts in sorted(by_solver.items()):
+    for solver_label, pts in sorted(by_solver.items()):
         pts.sort()
 
         xs = [x for x, _ in pts]
@@ -512,7 +617,7 @@ def _plot_metric(
             ys,
             marker="o",
             linewidth=2,
-            label=solver,
+            label=solver_label,
         )
 
     plt.xlabel("Number of customers")
@@ -526,7 +631,7 @@ def _plot_metric(
 
 
 # ===============================================================
-# Public API
+#  Public API
 # ===============================================================
 
 def benchmark_algorithms(
@@ -535,7 +640,36 @@ def benchmark_algorithms(
     solver_names: Optional[List[str]] = None,
     timeout_sec: Optional[float] = None,
     max_workers: int = 1,
+    solver_parallel_jobs: int = 1,
 ) -> Dict[str, Any]:
+    """
+    Benchmark algorithms on all .txt instances under data_root.
+
+    Parameters
+    ----------
+    data_root:
+        Root directory containing instance files.
+
+    graphs_dir:
+        Output directory for CSV files and plots.
+
+    solver_names:
+        Solvers to run. Recommended for HPC comparison:
+
+            ["ClarkeWright", "ParallelALNS", "ParallelMemetic"]
+
+    timeout_sec:
+        Wall-clock timeout per solver-instance run.
+        For your HPC setup, use 10.0.
+
+    max_workers:
+        Number of benchmark workers, i.e. how many instances are
+        evaluated concurrently.
+
+    solver_parallel_jobs:
+        Number of islands/processes used inside ParallelALNS and
+        ParallelMemetic for each individual instance.
+    """
     data_root = Path(data_root)
     graphs_dir = Path(graphs_dir)
     graphs_dir.mkdir(parents=True, exist_ok=True)
@@ -551,11 +685,14 @@ def benchmark_algorithms(
         )
 
     max_workers = max(1, int(max_workers))
+    solver_parallel_jobs = max(1, int(solver_parallel_jobs))
 
     print(f"\nBenchmarking instances under: {data_root}")
     print(f"Saving outputs to          : {graphs_dir}")
     print(f"Algorithms                 : {', '.join(solver_names)}")
     print(f"Total instances            : {len(instance_files)}")
+    print(f"Benchmark workers          : {max_workers}")
+    print(f"Solver parallel jobs       : {solver_parallel_jobs}")
 
     if timeout_sec is None:
         print("Per-run timeout            : none")
@@ -563,30 +700,33 @@ def benchmark_algorithms(
         print(f"Per-run timeout            : {timeout_sec:.1f} s")
 
     if max_workers <= 1:
-        print("Execution mode             : sequential")
+        print("Execution mode             : sequential benchmark")
 
         detail_rows = _benchmark_instance_subset(
             instance_files=instance_files,
             solver_names=solver_names,
             timeout_sec=timeout_sec,
+            solver_parallel_jobs=solver_parallel_jobs,
             worker_id=None,
         )
 
     else:
-        print("Execution mode             : multiprocessing")
+        print("Execution mode             : multiprocessing benchmark")
 
         detail_rows = _run_parallel_benchmark(
             instance_files=instance_files,
             solver_names=solver_names,
             timeout_sec=timeout_sec,
             max_workers=max_workers,
+            solver_parallel_jobs=solver_parallel_jobs,
         )
 
-    # Keep final output deterministic.
+    # Deterministic final output ordering.
     detail_rows.sort(
         key=lambda row: (
             str(row["instance_path"]),
             str(row["solver"]),
+            int(row.get("solver_parallel_jobs", 1) or 1),
         )
     )
 
@@ -606,6 +746,7 @@ def benchmark_algorithms(
             "instance_path",
             "customers",
             "solver",
+            "solver_parallel_jobs",
             "status",
             "time_sec",
             "solution_found",
@@ -620,6 +761,7 @@ def benchmark_algorithms(
         summary_rows,
         fieldnames=[
             "solver",
+            "solver_parallel_jobs",
             "customers",
 
             "time_runs",

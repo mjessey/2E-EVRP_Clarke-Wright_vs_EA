@@ -54,7 +54,11 @@ class ALNS:
         self,
         instance: Dict[str, Any],
         time_limit_sec: Optional[float] = None,
+        seed: Optional[int] = None,
     ) -> Dict[str, Any]:
+        if seed is not None:
+            random.seed(seed)
+
         self._start_timer(time_limit_sec)
 
         self.data    = instance

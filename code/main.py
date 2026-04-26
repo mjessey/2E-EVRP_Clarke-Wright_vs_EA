@@ -3,12 +3,17 @@
 #  Command-line launcher
 #   1) solve one instance with GUI + image export
 #   2) benchmark algorithms on many instances + runtime plot
+#
+#  HPC/parallel benchmark support:
+#   - benchmark_workers: number of instances evaluated concurrently
+#   - solver_parallel_jobs: number of per-instance islands/processes
+#     used by ParallelALNS and ParallelMemetic
 # -------------------------------------------------------------------
 
-import sys
 import os
+import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 from core.parser import Parser
 from core.evaluator import Evaluator
@@ -18,28 +23,35 @@ from core.solver_runner import solve_with_optional_timeout
 
 from gui.gui import GUI
 
+
 # -------------------------------------------------------------------
-def ask_for_cpu_count() -> int:
-    available = os.cpu_count() or 1
+def available_cpu_count() -> int:
+    """
+    Prefer scheduler-provided CPU counts if available.
+    Falls back to os.cpu_count().
 
-    while True:
-        p = input(
-            f"CPUs available: {available}\n"
-            f"How many CPUs/processes should be used for benchmarking? "
-            f"[default: {available}]\n> "
-        ).strip()
+    Common HPC scheduler variables:
+      - SLURM_CPUS_PER_TASK
+      - SLURM_CPUS_ON_NODE
+      - PBS_NP
+      - NSLOTS
+    """
+    for var in (
+        "SLURM_CPUS_PER_TASK",
+        "SLURM_CPUS_ON_NODE",
+        "PBS_NP",
+        "NSLOTS",
+    ):
+        val = os.environ.get(var)
+        if val:
+            try:
+                n = int(val)
+                if n > 0:
+                    return n
+            except ValueError:
+                pass
 
-        if not p:
-            return available
-
-        try:
-            val = int(p)
-            if 1 <= val <= available:
-                return val
-        except ValueError:
-            pass
-
-        print(f"Please enter an integer between 1 and {available}.\n")
+    return os.cpu_count() or 1
 
 
 def ask_for_mode() -> str:
@@ -47,55 +59,179 @@ def ask_for_mode() -> str:
         p = input(
             "Choose mode:\n"
             "1: Solve one instance\n"
-            "2: Benchmark Clarke-Wright vs ALNS\n> "
+            "2: Benchmark algorithms\n> "
         ).strip()
+
         if p in {"1", "2"}:
             return p
+
         print(f"'{p}' is not a valid option - try again.\n")
 
 
 def ask_for_path() -> Path:
     while True:
         p = input("Enter path to 2E-EVRP instance (or 'q' to quit): ").strip()
+
         if p.lower() in {"q", "quit", "exit"}:
             sys.exit(0)
+
         path = Path(p)
+
         if path.is_file():
             return path
+
         print(f"'{p}' is not a valid file – try again.\n")
 
 
 def ask_for_solver() -> str:
     while True:
-        p = input("Enter which algorithm to use:\n1: brute-force\n2: clarke-wright\n3: Adaptive Large Neighborhood Search:\n4: memetic: ")
-        if p in {"1", "2", "3", "4"}:
+        p = input(
+            "Enter which algorithm to use:\n"
+            "1: brute-force\n"
+            "2: clarke-wright\n"
+            "3: Adaptive Large Neighborhood Search\n"
+            "4: Memetic\n"
+            "5: Parallel ALNS\n"
+            "6: Parallel Memetic\n> "
+        ).strip()
+
+        if p in {"1", "2", "3", "4", "5", "6"}:
             return p
+
         print(f"'{p}' is not a valid option - try again.\n")
 
 
 def ask_for_directory(default_dir: Path, label: str) -> Path:
     while True:
         p = input(f"{label} [default: {default_dir}]\n> ").strip()
+
         if not p:
             return default_dir
+
         path = Path(p)
+
         if path.exists() and path.is_dir():
             return path
+
         print(f"'{p}' is not a valid directory - try again.\n")
 
 
 def ask_for_timeout(prompt: str) -> Optional[float]:
     while True:
         p = input(prompt).strip()
+
         if p == "":
             return None
+
         try:
             val = float(p)
             if val > 0:
                 return val
         except ValueError:
             pass
+
         print("Please enter a positive number or just press Enter.\n")
+
+
+def ask_for_int(
+    prompt: str,
+    default: int,
+    min_val: int,
+    max_val: int,
+) -> int:
+    while True:
+        p = input(f"{prompt} [default: {default}]\n> ").strip()
+
+        if not p:
+            return default
+
+        try:
+            val = int(p)
+            if min_val <= val <= max_val:
+                return val
+        except ValueError:
+            pass
+
+        print(f"Please enter an integer between {min_val} and {max_val}.\n")
+
+
+def ask_for_benchmark_parallelism() -> Tuple[int, int]:
+    """
+    Ask how to allocate CPUs between:
+      1. benchmark-level parallelism:
+           number of instances evaluated concurrently
+      2. solver-level parallelism:
+           number of islands/processes per ParallelALNS/ParallelMemetic run
+
+    Returns
+    -------
+    benchmark_workers, solver_parallel_jobs
+
+    Example
+    -------
+    If available CPUs = 64 and user chooses:
+
+        solver_parallel_jobs = 16
+        benchmark_workers = 4
+
+    then the benchmark runs approximately:
+
+        4 instances at the same time,
+        each ParallelALNS/ParallelMemetic instance using 16 islands.
+    """
+    available = available_cpu_count()
+
+    print(f"\nCPUs available according to system/scheduler: {available}")
+
+    default_solver_jobs = min(16, available)
+
+    solver_parallel_jobs = ask_for_int(
+        prompt=(
+            "CPUs/islands per solver instance for "
+            "ParallelALNS/ParallelMemetic"
+        ),
+        default=default_solver_jobs,
+        min_val=1,
+        max_val=available,
+    )
+
+    max_benchmark_workers = max(1, available // solver_parallel_jobs)
+
+    benchmark_workers = ask_for_int(
+        prompt=(
+            "Number of benchmark workers "
+            "(instances evaluated concurrently)"
+        ),
+        default=max_benchmark_workers,
+        min_val=1,
+        max_val=max_benchmark_workers,
+    )
+
+    print("\nParallel benchmark configuration:")
+    print(f"  CPUs available        : {available}")
+    print(f"  CPUs per instance     : {solver_parallel_jobs}")
+    print(f"  Benchmark workers     : {benchmark_workers}")
+    print(f"  Max active solver jobs : ~{benchmark_workers * solver_parallel_jobs}")
+    print()
+
+    return benchmark_workers, solver_parallel_jobs
+
+
+def solver_num_to_name(solver_num: str) -> str:
+    if solver_num == "1":
+        return "BruteForce"
+    if solver_num == "2":
+        return "ClarkeWright"
+    if solver_num == "3":
+        return "ALNS"
+    if solver_num == "4":
+        return "Memetic"
+    if solver_num == "5":
+        return "ParallelALNS"
+    if solver_num == "6":
+        return "ParallelMemetic"
+
+    raise ValueError(f"Unknown solver selection: {solver_num}")
 
 
 # -------------------------------------------------------------------
@@ -109,23 +245,34 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
     # choose solver -------------------------------------------------
     solver_num = ask_for_solver()
-    if solver_num == "1":
-        solver_name = "BruteForce"
-    elif solver_num == "2":
-        solver_name = "ClarkeWright"
-    elif solver_num == "3":
-        solver_name = "ALNS"
-    elif solver_num == "4":
-        solver_name = "Memetic"
-
+    solver_name = solver_num_to_name(solver_num)
 
     timeout_sec = ask_for_timeout(
         "Solver timeout in seconds for this instance "
         "(press Enter for no timeout)\n> "
     )
 
+    solver_parallel_jobs = 1
+
+    if solver_name in {"ParallelALNS", "ParallelMemetic"}:
+        available = available_cpu_count()
+
+        print(f"\nCPUs available according to system/scheduler: {available}")
+
+        solver_parallel_jobs = ask_for_int(
+            prompt="CPUs/islands to use for this solver instance",
+            default=min(16, available),
+            min_val=1,
+            max_val=available,
+        )
+
     # solve ---------------------------------------------------------
-    wrapped = solve_with_optional_timeout(solver_name, data, timeout_sec)
+    wrapped = solve_with_optional_timeout(
+        solver_name=solver_name,
+        data=data,
+        timeout_sec=timeout_sec,
+        solver_parallel_jobs=solver_parallel_jobs,
+    )
 
     if wrapped["status"] == "timeout":
         print(f"Solver timed out after {timeout_sec:.1f} seconds.")
@@ -133,8 +280,10 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
     if wrapped["status"] == "error":
         print("Solver failed:", wrapped.get("error", "unknown error"))
+
         if wrapped.get("traceback"):
             print(wrapped["traceback"])
+
         return
 
     result = wrapped["result"]
@@ -150,6 +299,13 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     print("-------------------------------------------------")
     print(f"Algorithm         : {solver_name}")
     print(f"Solve time        : {wrapped['time_sec']:.3f} s")
+
+    if solver_name in {"ParallelALNS", "ParallelMemetic"}:
+        print(f"Parallel islands  : {solver_parallel_jobs}")
+
+        if "parallel_workers" in result:
+            print(f"Workers used      : {result['parallel_workers']}")
+
     print(f"#EVs used         : {result['evs']}")
     print(f"Total distance    : {result['distance']:.2f}")
     print(f"Feasible          : {res['feasible']}")
@@ -157,10 +313,22 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
     if "routes" in result:
         print(f"Routes enumerated : {result['routes']}")
+
     if "milp_vars" in result:
         print(f"MILP variables    : {result['milp_vars']}")
+
     if "milp_time" in result and result["milp_time"] is not None:
         print(f"MILP solve time   : {result['milp_time']:.3f} s")
+
+    if "island_summaries" in result:
+        successful = sum(
+            1
+            for row in result["island_summaries"]
+            if row.get("status") == "ok" and row.get("solution_found")
+        )
+        total = len(result["island_summaries"])
+        print(f"Successful islands: {successful}/{total}")
+
     print("-------------------------------------------------")
 
     # visualise + save image into graphs/ --------------------------
@@ -175,21 +343,36 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
 
 def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
-    data_dir = ask_for_directory(project_root / "data", "Enter benchmark data directory")
-
-    timeout_sec = ask_for_timeout(
-        "Per-run timeout in seconds for benchmarking "
-        "(press Enter for no timeout)\n> "
+    data_dir = ask_for_directory(
+        project_root / "data",
+        "Enter benchmark data directory",
     )
 
-    max_workers = ask_for_cpu_count()
+    timeout_sec = ask_for_timeout(
+        "Per-run wall-clock timeout in seconds "
+        "(recommended for HPC comparison: 10; press Enter for no timeout)\n> "
+    )
+
+    benchmark_workers, solver_parallel_jobs = ask_for_benchmark_parallelism()
 
     result = benchmark_algorithms(
         data_root=data_dir,
         graphs_dir=graphs_dir,
-        solver_names=["ClarkeWright", "ALNS"],
+
+        # Clarke-Wright is mostly deterministic and generally should be
+        # parallelized across instances rather than within one instance.
+        #
+        # ParallelALNS and ParallelMemetic use solver_parallel_jobs
+        # independent islands per instance.
+        solver_names=[
+            "ClarkeWright",
+            "ParallelALNS",
+            "ParallelMemetic",
+        ],
+
         timeout_sec=timeout_sec,
-        max_workers=max_workers,
+        max_workers=benchmark_workers,
+        solver_parallel_jobs=solver_parallel_jobs,
     )
 
     print("\n-------------------------------------------------")
@@ -199,6 +382,7 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     print(f"Distance plot    : {result['distance_plot_path']}")
     print(f"EV usage plot    : {result['evs_plot_path']}")
     print("-------------------------------------------------")
+
 
 # -------------------------------------------------------------------
 def main() -> None:
@@ -213,12 +397,14 @@ def main() -> None:
 
     if len(sys.argv) >= 2:
         instance_path = Path(sys.argv[1])
+
         if instance_path.is_file():
             run_single_instance(instance_path, graphs_dir)
             return
 
     # interactive mode --------------------------------------------
     mode = ask_for_mode()
+
     if mode == "1":
         instance_path = ask_for_path()
         run_single_instance(instance_path, graphs_dir)
@@ -229,5 +415,6 @@ def main() -> None:
 # -------------------------------------------------------------------
 if __name__ == "__main__":
     import multiprocessing as mp
+
     mp.freeze_support()
     main()
