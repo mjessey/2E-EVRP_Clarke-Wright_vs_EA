@@ -149,11 +149,23 @@ class ParallelPortfolioSolver:
         n_jobs = max(1, min(self.n_jobs, available))
 
         # For single-core mode, directly call the underlying solver.
+        #
+        # Still subtract a small safety margin so cooperative anytime
+        # solvers, especially Memetic, can return their best solution
+        # before the outer hard timeout kills the process.
         if n_jobs <= 1:
+            single_time_limit = time_limit_sec
+
+            if single_time_limit is not None:
+                single_time_limit = max(
+                    0.1,
+                    float(single_time_limit) - self.safety_margin_sec,
+                )
+
             return _call_solver(
                 base_solver_name=self.BASE_SOLVER_NAME,
                 instance=instance,
-                time_limit_sec=time_limit_sec,
+                time_limit_sec=single_time_limit,
                 seed=seed,
             )
 

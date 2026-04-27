@@ -7,56 +7,33 @@
 #
 #  Full pipeline
 #  -------------
-#  1. Generate initial population via k-Pseudo Greedy (Stage 1)
-#  2. Apply adaptive local search to each individual (Stage 2)
+#  1. Generate initial population via k-Pseudo Greedy
+#  2. Apply adaptive local search to each individual
 #  3. Main loop until stopping criterion:
 #       a. Randomly select two parents from population
-#       b. Generate offspring via backbone crossover (Stage 3)
-#       c. Improve offspring with adaptive local search (Stage 2)
+#       b. Generate offspring via backbone crossover
+#       c. Improve offspring with adaptive local search
 #       d. Update global best if improved
-#       e. LCS-based population update (Section 4.5)
+#       e. LCS-based population update
 #  4. Return best solution found
 #
-#  LCS Population Updating (Section 4.5)
-#  --------------------------------------
-#  Decides whether to insert the offspring into the population
-#  by computing a "goodness score" that balances:
-#    - Solution quality  (objective value)
-#    - Population diversity (LCS distance to nearest neighbour)
-#
-#  GS(Si) = δ * (fmax - f(Si)) / (fmax - fmin + 1)
-#          + (1-δ) * (Dist(Si) - Distmin) / (Distmax - Distmin + 1)
-#
-#  Insert offspring if GS(offspring) > GS(worst individual).
-#  This keeps the population both elite and diverse.
-#
-#  LCS distance between two solutions
-#  -----------------------------------
-#  Flatten each solution to a sequence of all customer+station
-#  node IDs across all routes. The LCS distance is:
-#    Dist(Si, Sj) = 2*(n+s) - LCS_length(Si, Sj)
-#  where n+s = total customers + stations.
-#  Lower LCS distance = more similar solutions.
-#  The distance of a solution to the population = min over all
-#  other individuals.
-#
-#  Parameters from paper Table 1
-#  ------------------------------
-#  np    = 15     population size
-#  delta = 0.7    weight balancing quality vs diversity
-#  k     = 3      k-Pseudo Greedy parameter
-#  max computing time = stopping criterion
-#
-#  HPC/parallel portfolio note
-#  ---------------------------
+#  Anytime behavior
+#  ----------------
 #  This implementation supports:
 #
 #      solve(instance, time_limit_sec=..., seed=...)
 #
-#  so it can be used as an independent island inside
-#  ParallelMemetic. For short time budgets, e.g. 10 seconds,
-#  local-search calls are made time-aware so the algorithm does not
-#  spend the entire budget only improving the initial population.
+#  and is designed to behave as an anytime solver:
+#
+#      - it keeps track of the best solution found so far
+#      - it checks a deadline before expensive phases
+#      - it gives local search only the remaining available time
+#      - it skips optional route-elimination/extra-improvement steps
+#        when too close to the deadline
+#
+#  This is important when used through solver_runner.py, where an
+#  outer hard timeout may terminate the process if the solver does
+#  not return in time.
 # ---------------------------------------------------------------
 
 from __future__ import annotations
@@ -84,10 +61,18 @@ class MemeticAlgorithm:
     """
 
     # ---- parameters from paper Table 1 -------------------------
-    POP_SIZE = 6       # np: population size
+    POP_SIZE = 6        # np: population size
     DELTA = 0.7         # δ: quality vs diversity balance
     K_GREEDY = 2        # k: k-Pseudo Greedy candidates
-    MAX_TIME = 10.0    # seconds: default stopping criterion
+    MAX_TIME = 10.0     # seconds: default stopping criterion
+
+    # ---- anytime safety parameters -----------------------------
+    # If less than this much time remains, skip optional expensive
+    # improvement/cleanup steps and focus on returning best-so-far.
+    RETURN_SAFETY_SEC = 0.25
+
+    # Minimum time slice given to local search.
+    MIN_LOCAL_SEARCH_SEC = 0.05
 
     # ------------------------------------------------------------
     def solve(
@@ -114,7 +99,12 @@ class MemeticAlgorithm:
         if seed is not None:
             random.seed(seed)
 
-        max_time = float(time_limit_sec) if time_limit_sec is not None else self.MAX_TIME
+        max_time = (
+            float(time_limit_sec)
+            if time_limit_sec is not None
+            else self.MAX_TIME
+        )
+
         t_start = time.time()
         deadline = t_start + max_time
 
@@ -127,7 +117,10 @@ class MemeticAlgorithm:
         self.INV_G = instance["params"]["g"]
 
         coords = {
-            n: (instance["nodes"][n]["x"], instance["nodes"][n]["y"])
+            n: (
+                instance["nodes"][n]["x"],
+                instance["nodes"][n]["y"],
+            )
             for n in instance["nodes"]
         }
 
@@ -145,14 +138,19 @@ class MemeticAlgorithm:
         local = AdaptiveLocalSearch(instance)
         crossover = BackboneCrossover(instance)
 
-        # ---- 1. initial population ------------------------------
+        # --------------------------------------------------------
+        # 1. initial population
+        # --------------------------------------------------------
         print("  [MA] Generating initial population...")
 
-        # For very short HPC runs, a smaller population usually gives
-        # the algorithm more time to evolve instead of spending the whole
-        # budget improving the initial population.
+        # For short anytime runs, use a smaller population so the
+        # algorithm can reach the evolutionary loop instead of spending
+        # the entire budget on initial population improvement.
         pop_size = self.POP_SIZE
-        if max_time <= 15.0:
+
+        if max_time <= 5.0:
+            pop_size = min(self.POP_SIZE, 5)
+        elif max_time <= 15.0:
             pop_size = min(self.POP_SIZE, 8)
 
         population = greedy.generate_population(pop_size)
@@ -164,41 +162,42 @@ class MemeticAlgorithm:
                 "distance": float("inf"),
             }
 
-        if time.time() >= deadline:
-            # If construction consumed the whole budget, return the best
-            # constructed solution without local improvement.
-            costs = [self._cost(s) for s in population]
-            best_idx = min(range(len(population)), key=lambda i: costs[i])
-            best = copy.deepcopy(population[best_idx])
-            res = self.ev.evaluate(best)
+        # If construction itself consumed the whole budget, return the
+        # best constructed solution.
+        if self._time_nearly_exhausted(deadline):
+            best = self._best_solution_from_population(population)
+            return self._format_result(best)
 
-            return {
-                "solution": best,
-                "evs": self.ev._count_evs(best),
-                "distance": res["cost"],
-            }
-
-        # ---- 2. improve each individual -------------------------
+        # --------------------------------------------------------
+        # 2. improve each initial individual
+        # --------------------------------------------------------
         print("  [MA] Running local search on initial population...")
 
         for idx, s in enumerate(population):
-            remaining = deadline - time.time()
-            if remaining <= 0:
+            remaining = self._remaining_time(deadline)
+
+            if remaining <= self.RETURN_SAFETY_SEC:
                 break
 
-            # Keep the initial-improvement phase time-aware.
-            # For 10-second runs, this prevents 15 * 2s initialization.
             remaining_individuals = max(1, len(population) - idx)
+
+            # Reserve some time for at least a few generations.
             ls_limit = min(
-                0.5,
-                max(0.05, remaining / (remaining_individuals + 3)),
+                2.0,
+                max(
+                    self.MIN_LOCAL_SEARCH_SEC,
+                    remaining / (remaining_individuals + 3),
+                ),
             )
 
             improved = local.run(s, time_limit=ls_limit)
 
-            eliminated = self._try_eliminate_route(improved)
-            if eliminated is not None:
-                improved = eliminated
+            # Route elimination is optional and can be expensive.
+            # Skip it if close to the deadline.
+            improved = self._maybe_eliminate_route(
+                improved,
+                deadline=deadline,
+            )
 
             population[idx] = improved
             cost = self._cost(improved)
@@ -216,34 +215,44 @@ class MemeticAlgorithm:
         print(f"  [MA] Initial best cost: {best_cost:.2f}")
         print(f"  [MA] Population costs: {[round(c, 2) for c in costs]}")
 
-        # ---- 3. main loop ---------------------------------------
+        # --------------------------------------------------------
+        # 3. main evolutionary loop
+        # --------------------------------------------------------
         generation = 0
 
-        while time.time() < deadline:
+        while not self._time_nearly_exhausted(deadline):
             generation += 1
 
-            # select two distinct parents randomly
             if len(population) < 2:
                 break
 
             i, j = random.sample(range(len(population)), 2)
             pa, pb = population[i], population[j]
 
-            # crossover
+            # Crossover can be moderately expensive, so check the
+            # deadline before starting it.
+            if self._time_nearly_exhausted(deadline):
+                break
+
             offspring = crossover.crossover(pa, pb)
+
             if offspring is None:
                 continue
 
             parent_cost = min(self._cost(pa), self._cost(pb))
             offspring_cost_before_ls = self._cost(offspring)
 
-            remaining = deadline - time.time()
-            if remaining <= 0:
+            remaining = self._remaining_time(deadline)
+
+            if remaining <= self.RETURN_SAFETY_SEC:
                 break
 
             offspring_ls_limit = min(
                 5.0,
-                max(0.05, remaining * 0.5),
+                max(
+                    self.MIN_LOCAL_SEARCH_SEC,
+                    remaining * 0.5,
+                ),
             )
 
             offspring = local.run(
@@ -252,28 +261,45 @@ class MemeticAlgorithm:
                 quick=True,
             )
 
-            eliminated = self._try_eliminate_route(offspring)
-            if eliminated is not None:
-                offspring = eliminated
+            offspring = self._maybe_eliminate_route(
+                offspring,
+                deadline=deadline,
+            )
 
             offspring_cost = self._cost(offspring)
 
-            if generation % 5 == 0 and offspring_cost >= best_cost:
+            # Optional extra stripped-parent attempt.
+            # This can be useful but should be skipped near deadline.
+            if (
+                generation % 5 == 0
+                and offspring_cost >= best_cost
+                and not self._time_nearly_exhausted(deadline)
+            ):
                 pa_stripped = self._strip_smallest_route(pa)
 
-                if pa_stripped is not None and time.time() < deadline:
+                if pa_stripped is not None and not self._time_nearly_exhausted(deadline):
                     stripped_offspring = crossover.crossover(pa_stripped, pb)
 
                     if stripped_offspring is not None:
-                        remaining = deadline - time.time()
+                        remaining = self._remaining_time(deadline)
 
-                        if remaining > 0:
+                        if remaining > self.RETURN_SAFETY_SEC:
+                            stripped_ls_limit = min(
+                                5.0,
+                                max(
+                                    self.MIN_LOCAL_SEARCH_SEC,
+                                    remaining * 0.5,
+                                ),
+                            )
+
                             stripped_offspring = local.run(
                                 stripped_offspring,
-                                time_limit=min(
-                                    5.0,
-                                    max(0.05, remaining * 0.5),
-                                ),
+                                time_limit=stripped_ls_limit,
+                            )
+
+                            stripped_offspring = self._maybe_eliminate_route(
+                                stripped_offspring,
+                                deadline=deadline,
                             )
 
                             stripped_cost = self._cost(stripped_offspring)
@@ -300,7 +326,12 @@ class MemeticAlgorithm:
                     f"t={time.time() - t_start:.1f}s"
                 )
 
-            # LCS population update
+            # LCS update is useful but can cost O(p^2 n^2).
+            # Population is small, but still skip it if too close
+            # to the deadline. In that case, best-so-far is already safe.
+            if self._time_nearly_exhausted(deadline):
+                break
+
             population, costs = self._lcs_update(
                 population,
                 costs,
@@ -313,17 +344,66 @@ class MemeticAlgorithm:
             f"best cost: {best_cost:.2f}"
         )
 
-        # ---- 4. final evaluation --------------------------------
-        res = self.ev.evaluate(best)
+        return self._format_result(best)
+
+    # ============================================================
+    #  Anytime helpers
+    # ============================================================
+
+    def _remaining_time(self, deadline: float) -> float:
+        return deadline - time.time()
+
+    def _time_nearly_exhausted(self, deadline: float) -> bool:
+        return self._remaining_time(deadline) <= self.RETURN_SAFETY_SEC
+
+    def _maybe_eliminate_route(
+        self,
+        sol: Solution,
+        deadline: float,
+    ) -> Solution:
+        """
+        Try route elimination only if there is enough time left.
+
+        _try_eliminate_route can be expensive because it attempts
+        greedy reinsertion of removed customers. For anytime behavior,
+        skip it near the deadline so the solver can return best-so-far.
+        """
+        if self._time_nearly_exhausted(deadline):
+            return sol
+
+        eliminated = self._try_eliminate_route(sol)
+
+        if eliminated is not None:
+            return eliminated
+
+        return sol
+
+    def _best_solution_from_population(
+        self,
+        population: List[Solution],
+    ) -> Solution:
+        costs = [self._cost(s) for s in population]
+        best_idx = min(range(len(population)), key=lambda i: costs[i])
+        return copy.deepcopy(population[best_idx])
+
+    def _format_result(self, sol: Optional[Solution]) -> Dict[str, Any]:
+        if sol is None:
+            return {
+                "solution": None,
+                "evs": 0,
+                "distance": float("inf"),
+            }
+
+        res = self.ev.evaluate(sol)
 
         return {
-            "solution": best,
-            "evs": self.ev._count_evs(best),
+            "solution": sol,
+            "evs": self.ev._count_evs(sol),
             "distance": res["cost"],
         }
 
     # ============================================================
-    #  LCS-based population updating  (Section 4.5)
+    #  LCS-based population updating
     # ============================================================
 
     def _lcs_update(
@@ -342,8 +422,6 @@ class MemeticAlgorithm:
         all_sols = population + [offspring]
         all_costs = costs + [offspring_cost]
 
-        # ---- compute LCS distances ------------------------------
-        # distance of each solution to its nearest neighbour
         seqs = [self._flatten(s) for s in all_sols]
 
         distances = []
@@ -356,24 +434,25 @@ class MemeticAlgorithm:
                     continue
 
                 lcs_len = self._lcs_length(seqs[i], seqs[j])
-                dist_ij = len(seqs[i]) - lcs_len
+
+                # Symmetric LCS distance.
+                dist_ij = len(seqs[i]) + len(seqs[j]) - 2 * lcs_len
 
                 if dist_ij < min_dist:
                     min_dist = dist_ij
 
             distances.append(min_dist if min_dist != math.inf else 0.0)
 
-        # ---- compute goodness scores ----------------------------
-        f_vals = all_costs
-        f_max = max(f_vals)
-        f_min = min(f_vals)
+        f_max = max(all_costs)
+        f_min = min(all_costs)
 
-        d_vals = distances
-        d_max = max(d_vals)
-        d_min = min(d_vals)
+        d_max = max(distances)
+        d_min = min(distances)
 
         def goodness(idx: int) -> float:
             cost_spread = max(all_costs) - min(all_costs)
+
+            # If solutions are close in cost, encourage diversity more.
             delta = 0.3 if cost_spread < 1000 else self.DELTA
 
             quality = (f_max - all_costs[idx]) / (f_max - f_min + 1)
@@ -383,11 +462,9 @@ class MemeticAlgorithm:
 
         scores = [goodness(i) for i in range(len(all_sols))]
 
-        # offspring is the last element
         offspring_idx = len(all_sols) - 1
         offspring_gs = scores[offspring_idx]
 
-        # worst individual in current population, excluding offspring
         worst_idx = min(range(n), key=lambda i: scores[i])
         worst_gs = scores[worst_idx]
 
@@ -405,25 +482,26 @@ class MemeticAlgorithm:
         """
         Flatten a solution to a single sequence of customer and
         station node IDs across all EV routes.
-        Satellite endpoints are excluded — only the inner nodes
-        matter for LCS similarity comparison.
+
+        Satellite endpoints are excluded.
         """
-        seq = []
+        seq: List[str] = []
 
         for routes in sol.ev_routes.values():
             for r in routes:
-                for n in r[1:-1]:
-                    t = self.data["nodes"][n]["Type"]
+                for node_id in r[1:-1]:
+                    node_type = self.data["nodes"][node_id]["Type"]
 
-                    if t in ("c", "f"):
-                        seq.append(n)
+                    if node_type in ("c", "f"):
+                        seq.append(node_id)
 
         return seq
 
     def _lcs_length(self, a: List[str], b: List[str]) -> int:
         """
         Compute the length of the longest common subsequence
-        between sequences a and b using standard DP.
+        between sequences a and b.
+
         O(|a| * |b|) time and O(|b|) space.
         """
         m, n = len(a), len(b)
@@ -445,25 +523,29 @@ class MemeticAlgorithm:
 
         return prev[n]
 
+    # ============================================================
+    #  Route elimination helpers
+    # ============================================================
+
     def _strip_smallest_route(self, sol: Solution) -> Optional[Solution]:
         min_custs = float("inf")
         min_sat = None
         min_ridx = None
 
         for sat, routes in sol.ev_routes.items():
-            for ridx, r in enumerate(routes):
-                n = sum(
+            for ridx, route in enumerate(routes):
+                n_custs = sum(
                     1
-                    for n in r
-                    if self.data["nodes"][n]["Type"] == "c"
+                    for node_id in route
+                    if self.data["nodes"][node_id]["Type"] == "c"
                 )
 
-                if n < min_custs:
-                    min_custs = n
+                if n_custs < min_custs:
+                    min_custs = n_custs
                     min_sat = sat
                     min_ridx = ridx
 
-        if min_sat is None:
+        if min_sat is None or min_ridx is None:
             return None
 
         new_ev = copy.deepcopy(sol.ev_routes)
@@ -481,34 +563,37 @@ class MemeticAlgorithm:
         """
         Find the route with fewest customers, remove all its customers,
         and greedily reinsert them into other routes.
-        Returns improved solution if successful, None otherwise.
+
+        Returns improved/repaired solution if successful, None otherwise.
+
+        Note:
+        This function is intentionally not called near the deadline by
+        _maybe_eliminate_route(), because it may be expensive.
         """
-        # find smallest non-empty route
         min_custs = float("inf")
         min_sat = None
         min_ridx = None
 
         for sat, routes in sol.ev_routes.items():
-            for ridx, r in enumerate(routes):
-                n = sum(
+            for ridx, route in enumerate(routes):
+                n_custs = sum(
                     1
-                    for n in r
-                    if self.data["nodes"][n]["Type"] == "c"
+                    for node_id in route
+                    if self.data["nodes"][node_id]["Type"] == "c"
                 )
 
-                if 0 < n < min_custs:
-                    min_custs = n
+                if 0 < n_custs < min_custs:
+                    min_custs = n_custs
                     min_sat = sat
                     min_ridx = ridx
 
-        if min_sat is None:
+        if min_sat is None or min_ridx is None:
             return None
 
-        # remove the route
         removed = [
-            n
-            for n in sol.ev_routes[min_sat][min_ridx]
-            if self.data["nodes"][n]["Type"] == "c"
+            node_id
+            for node_id in sol.ev_routes[min_sat][min_ridx]
+            if self.data["nodes"][node_id]["Type"] == "c"
         ]
 
         new_ev = copy.deepcopy(sol.ev_routes)
@@ -522,7 +607,6 @@ class MemeticAlgorithm:
             ev_routes=new_ev,
         )
 
-        # try to reinsert all removed customers
         for cust in removed:
             best_cost = float("inf")
             best_sat = None
@@ -530,14 +614,14 @@ class MemeticAlgorithm:
             best_pos = None
 
             for sat, routes in partial.ev_routes.items():
-                for r_idx, r in enumerate(routes):
-                    for pos in range(1, len(r)):
-                        candidate = r[:pos] + [cust] + r[pos:]
+                for r_idx, route in enumerate(routes):
+                    for pos in range(1, len(route)):
+                        candidate = route[:pos] + [cust] + route[pos:]
 
                         load = sum(
-                            self.data["nodes"][n]["DeliveryDemand"]
-                            for n in candidate
-                            if self.data["nodes"][n]["Type"] == "c"
+                            self.data["nodes"][node_id]["DeliveryDemand"]
+                            for node_id in candidate
+                            if self.data["nodes"][node_id]["Type"] == "c"
                         )
 
                         if load > self.EV_CAP:
@@ -557,17 +641,20 @@ class MemeticAlgorithm:
                             best_ridx = r_idx
                             best_pos = pos
 
-            if best_sat is None:
+            if best_sat is None or best_ridx is None or best_pos is None:
                 return None
 
-            r = partial.ev_routes[best_sat][best_ridx]
+            route = partial.ev_routes[best_sat][best_ridx]
             partial.ev_routes[best_sat][best_ridx] = (
-                r[:best_pos] + [cust] + r[best_pos:]
+                route[:best_pos] + [cust] + route[best_pos:]
             )
 
         return partial
 
     def _route_feasible_check(self, route: List[str], sat: str) -> bool:
+        """
+        Check battery and customer time windows for one EV route.
+        """
         time_now = 0.0
         soc = self.BAT_CAP
         prev = route[0]
@@ -580,13 +667,13 @@ class MemeticAlgorithm:
             if soc < -1e-9:
                 return False
 
-            ntype = self.data["nodes"][nxt]["Type"]
+            node_type = self.data["nodes"][nxt]["Type"]
 
-            if ntype == "f":
+            if node_type == "f":
                 time_now += (self.BAT_CAP - soc) * self.INV_G
                 soc = self.BAT_CAP
 
-            elif ntype == "c":
+            elif node_type == "c":
                 node = self.data["nodes"][nxt]
 
                 if time_now < node["ReadyTime"]:

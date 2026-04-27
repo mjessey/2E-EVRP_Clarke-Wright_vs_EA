@@ -235,6 +235,33 @@ def _chunk_size_counts(chunk: List[Path]) -> Dict[str, int]:
     )
 
 
+def _timeout_for_solver(
+    solver_name: str,
+    default_timeout_sec: Optional[float],
+    solver_timeouts: Optional[Dict[str, Optional[float]]],
+) -> Optional[float]:
+    """
+    Return the timeout for a specific solver.
+
+    If solver_timeouts contains the solver, use that value.
+    Otherwise use default_timeout_sec.
+
+    Examples:
+        solver_timeouts = {
+            "ALNS": None,
+            "Memetic": 10.0,
+        }
+
+    means:
+        ALNS runs with no wall-clock timeout.
+        Memetic is capped at 10 seconds.
+    """
+    if solver_timeouts is not None and solver_name in solver_timeouts:
+        return solver_timeouts[solver_name]
+
+    return default_timeout_sec
+
+
 def _effective_solver_parallel_jobs(
     solver_name: str,
     solver_parallel_jobs: int,
@@ -266,6 +293,7 @@ def _benchmark_instance_subset(
     timeout_sec: Optional[float],
     solver_parallel_jobs: int = 1,
     worker_id: Optional[int] = None,
+    solver_timeouts: Optional[Dict[str, Optional[float]]] = None,
 ) -> List[Dict[str, Any]]:
     """
     Run benchmark on a subset of instance files.
@@ -329,9 +357,18 @@ def _benchmark_instance_subset(
                 solver_parallel_jobs,
             )
 
+            run_timeout_sec = _timeout_for_solver(
+                solver_name=solver_name,
+                default_timeout_sec=timeout_sec,
+                solver_timeouts=solver_timeouts,
+            )
+
+            timeout_text = "none" if run_timeout_sec is None else f"{run_timeout_sec:.1f}s"
+
             print(
                 f"{prefix}  - {solver_name:<13} "
-                f"jobs={effective_jobs:<3} ... ",
+                f"jobs={effective_jobs:<3} "
+                f"timeout={timeout_text:<6} ... ",
                 end="",
                 flush=True,
             )
@@ -339,7 +376,7 @@ def _benchmark_instance_subset(
             res = solve_with_optional_timeout(
                 solver_name=solver_name,
                 data=data,
-                timeout_sec=timeout_sec,
+                timeout_sec=run_timeout_sec,
                 solver_parallel_jobs=effective_jobs,
             )
 
@@ -435,6 +472,7 @@ def _benchmark_worker(
     solver_names: List[str],
     timeout_sec: Optional[float],
     solver_parallel_jobs: int,
+    solver_timeouts: Optional[Dict[str, Optional[float]]],
     result_queue: mp.Queue,
 ) -> None:
     """
@@ -449,6 +487,7 @@ def _benchmark_worker(
             timeout_sec=timeout_sec,
             solver_parallel_jobs=solver_parallel_jobs,
             worker_id=worker_id,
+            solver_timeouts=solver_timeouts,
         )
 
         result_queue.put({
@@ -473,6 +512,7 @@ def _run_parallel_benchmark(
     timeout_sec: Optional[float],
     max_workers: int,
     solver_parallel_jobs: int = 1,
+    solver_timeouts: Optional[Dict[str, Optional[float]]] = None,
 ) -> List[Dict[str, Any]]:
     """
     Run benchmark using multiple benchmark workers.
@@ -516,6 +556,7 @@ def _run_parallel_benchmark(
                 solver_names,
                 timeout_sec,
                 solver_parallel_jobs,
+                solver_timeouts,
                 result_queue,
             ),
         )
@@ -1137,6 +1178,7 @@ def benchmark_algorithms(
     timeout_sec: Optional[float] = None,
     max_workers: int = 1,
     solver_parallel_jobs: int = 1,
+    solver_timeouts: Optional[Dict[str, Optional[float]]] = None,
 ) -> Dict[str, Any]:
     """
     Benchmark algorithms on all .txt instances under data_root.
@@ -1217,6 +1259,7 @@ def benchmark_algorithms(
             timeout_sec=timeout_sec,
             solver_parallel_jobs=solver_parallel_jobs,
             worker_id=None,
+            solver_timeouts=solver_timeouts,
         )
 
     else:
@@ -1228,6 +1271,7 @@ def benchmark_algorithms(
             timeout_sec=timeout_sec,
             max_workers=max_workers,
             solver_parallel_jobs=solver_parallel_jobs,
+            solver_timeouts=solver_timeouts,
         )
 
     # Deterministic final output ordering.

@@ -454,10 +454,28 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
 
     solver_names = ask_for_benchmark_solvers()
 
-    timeout_sec = ask_for_timeout(
-        "Per-run wall-clock timeout in seconds "
-        "(recommended for HPC comparison: 10; press Enter for no timeout)\n> "
-    )
+    # Per-solver timeout policy for normal benchmark:
+    #
+    #   ALNS:
+    #       no wall-clock timeout.
+    #       It still stops according to its own MAX_ITERATIONS.
+    #
+    #   Memetic:
+    #       capped at 10 seconds.
+    #
+    #   Other solvers:
+    #       no wall-clock timeout by default.
+    timeout_sec = None
+
+    solver_timeouts = {
+        "ALNS": None,
+        "Memetic": 10.0,
+    }
+
+    print("\nPer-solver timeout policy:")
+    print("  ALNS    : no wall-clock timeout")
+    print("  Memetic : 10.0 seconds")
+    print("  Others  : no wall-clock timeout")
 
     benchmark_workers, solver_parallel_jobs = ask_for_benchmark_parallelism()
 
@@ -468,6 +486,7 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
         timeout_sec=timeout_sec,
         max_workers=benchmark_workers,
         solver_parallel_jobs=solver_parallel_jobs,
+        solver_timeouts=solver_timeouts,
     )
 
     print("\n-------------------------------------------------")
