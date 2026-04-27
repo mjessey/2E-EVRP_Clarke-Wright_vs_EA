@@ -9,20 +9,38 @@
 #        ALNS / Memetic can use multiple islands per instance
 #        through solver_parallel_jobs
 #
-#  User-facing behavior:
-#    - ALNS with solver_parallel_jobs = 1:
-#        ordinary single-island ALNS
-#    - ALNS with solver_parallel_jobs > 1:
-#        parallel multi-start/island ALNS
-#    - Memetic with solver_parallel_jobs = 1:
-#        ordinary single-island Memetic
-#    - Memetic with solver_parallel_jobs > 1:
-#        parallel island Memetic
+#  Also produces plots split by instance type:
+#    - Clustered: filename starts with "C"
+#    - Random:    filename starts with "R"
+#    - Mixed:     filename starts with "RC"
 #
-#  Saves:
+#  Important:
+#    Check "RC" before "R", otherwise mixed instances would be
+#    classified as random.
+#
+#  For each metric:
+#    1. Overall algorithm comparison
+#    2. Clustered-only algorithm comparison
+#    3. Random-only algorithm comparison
+#    4. Mixed-only algorithm comparison
+#    5. One per-solver plot comparing that solver across types
+#
+#  With n algorithms and 3 metrics:
+#      total plots = 3 * (4 + n)
+#
+#  Saves legacy plots:
 #    - graphs/runtime_comparison.png
 #    - graphs/distance_comparison.png
 #    - graphs/evs_comparison.png
+#
+#  Saves additional plots:
+#    - graphs/runtime_comparison_clustered.png
+#    - graphs/runtime_comparison_random.png
+#    - graphs/runtime_comparison_mixed.png
+#    - graphs/runtime_by_type_<solver>.png
+#    - and equivalent distance/EV plots
+#
+#  Saves:
 #    - graphs/runtime_comparison_details.csv
 #    - graphs/runtime_comparison_summary.csv
 # ---------------------------------------------------------------
@@ -60,6 +78,14 @@ PARALLEL_SOLVER_NAMES = {
     "Memetic",
 }
 
+INSTANCE_TYPES = [
+    "Clustered",
+    "Random",
+    "Mixed",
+]
+
+INSTANCE_TYPE_ALL = "All"
+
 
 # ===============================================================
 #  CSV helpers
@@ -78,6 +104,42 @@ def _write_csv(
 
 def _is_number(x: Any) -> bool:
     return isinstance(x, (int, float))
+
+
+# ===============================================================
+#  Instance type helpers
+# ===============================================================
+
+def _instance_type_from_name(path: Path) -> str:
+    """
+    Determine distribution type from filename.
+
+    Rules:
+      - starts with "RC" -> Mixed
+      - starts with "R"  -> Random
+      - starts with "C"  -> Clustered
+
+    "RC" must be checked before "R".
+    """
+    name = path.name.upper()
+
+    if name.startswith("RC"):
+        return "Mixed"
+
+    if name.startswith("R"):
+        return "Random"
+
+    if name.startswith("C"):
+        return "Clustered"
+
+    return "Unknown"
+
+
+def _safe_filename_part(s: str) -> str:
+    """
+    Make a solver/type label safe for filenames.
+    """
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", str(s)).strip("_")
 
 
 # ===============================================================
@@ -102,11 +164,14 @@ def _instance_size_key(path: Path) -> str:
     return path.parent.name
 
 
-def _sort_size_key(x: str) -> Any:
+def _sort_size_key(x: str) -> tuple:
+    """
+    Sort numeric size keys numerically and non-numeric keys lexically.
+    """
     if str(x).isdigit():
-        return int(x)
+        return (0, int(x))
 
-    return str(x)
+    return (1, str(x))
 
 
 def _balanced_chunks_by_input_size(
@@ -216,20 +281,22 @@ def _benchmark_instance_subset(
         prefix = f"[worker {worker_id}] "
 
     for instance_path in instance_files:
+        instance_type = _instance_type_from_name(instance_path)
+
         try:
             data = Parser(instance_path).data
             n_customers = len(data["customers"])
 
             print(
                 f"{prefix}Instance: {instance_path.name} | "
-                f"customers={n_customers}",
+                f"customers={n_customers} | type={instance_type}",
                 flush=True,
             )
 
         except Exception as err:
             print(
                 f"{prefix}Instance: {instance_path.name} | "
-                f"PARSE ERROR: {err}",
+                f"type={instance_type} | PARSE ERROR: {err}",
                 flush=True,
             )
 
@@ -243,6 +310,7 @@ def _benchmark_instance_subset(
                     "instance": instance_path.name,
                     "instance_path": str(instance_path),
                     "customers": "",
+                    "instance_type": instance_type,
                     "solver": solver_name,
                     "solver_parallel_jobs": effective_jobs,
                     "status": "parse_error",
@@ -283,6 +351,7 @@ def _benchmark_instance_subset(
                     "instance": instance_path.name,
                     "instance_path": str(instance_path),
                     "customers": n_customers,
+                    "instance_type": instance_type,
                     "solver": solver_name,
                     "solver_parallel_jobs": effective_jobs,
                     "status": "ok",
@@ -311,6 +380,7 @@ def _benchmark_instance_subset(
                     "instance": instance_path.name,
                     "instance_path": str(instance_path),
                     "customers": n_customers,
+                    "instance_type": instance_type,
                     "solver": solver_name,
                     "solver_parallel_jobs": effective_jobs,
                     "status": "timeout",
@@ -328,6 +398,7 @@ def _benchmark_instance_subset(
                     "instance": instance_path.name,
                     "instance_path": str(instance_path),
                     "customers": n_customers,
+                    "instance_type": instance_type,
                     "solver": solver_name,
                     "solver_parallel_jobs": effective_jobs,
                     "status": res.get("status", "error"),
@@ -419,9 +490,18 @@ def _run_parallel_benchmark(
             f"{size}: {count}" for size, count in counts.items()
         )
 
+        type_counts: Dict[str, int] = defaultdict(int)
+        for path in chunk:
+            type_counts[_instance_type_from_name(path)] += 1
+
+        type_counts_text = ", ".join(
+            f"{typ}: {count}"
+            for typ, count in sorted(type_counts.items())
+        )
+
         print(
             f"  Worker {i:<3}: {len(chunk):<5} instances "
-            f"({counts_text})"
+            f"({counts_text}) | types=({type_counts_text})"
         )
 
     result_queue: mp.Queue = mp.Queue()
@@ -501,13 +581,33 @@ def _run_parallel_benchmark(
 #  Summary generation
 # ===============================================================
 
-def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _build_summary_for_type(
+    detail_rows: List[Dict[str, Any]],
+    instance_type_filter: Optional[str],
+    summary_instance_type: str,
+) -> List[Dict[str, Any]]:
+    """
+    Build summary rows for either:
+      - all instance types combined
+      - one specific instance type
+
+    summary_instance_type is written into the CSV, e.g.:
+      - "All"
+      - "Clustered"
+      - "Random"
+      - "Mixed"
+    """
     grouped_time: Dict[tuple, List[float]] = defaultdict(list)
     grouped_dist: Dict[tuple, List[float]] = defaultdict(list)
     grouped_evs: Dict[tuple, List[float]] = defaultdict(list)
 
     for row in detail_rows:
         if row["status"] != "ok":
+            continue
+
+        row_type = row.get("instance_type", "Unknown")
+
+        if instance_type_filter is not None and row_type != instance_type_filter:
             continue
 
         solver = row["solver"]
@@ -553,6 +653,7 @@ def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         ev_vals = grouped_evs.get(key, [])
 
         summary_rows.append({
+            "instance_type": summary_instance_type,
             "solver": solver,
             "solver_parallel_jobs": solver_parallel_jobs,
             "customers": customers,
@@ -576,33 +677,102 @@ def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return summary_rows
 
 
+def _build_summary(detail_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Build summary for:
+      - all instance types combined
+      - Clustered only
+      - Random only
+      - Mixed only
+    """
+    summary_rows: List[Dict[str, Any]] = []
+
+    summary_rows.extend(
+        _build_summary_for_type(
+            detail_rows=detail_rows,
+            instance_type_filter=None,
+            summary_instance_type=INSTANCE_TYPE_ALL,
+        )
+    )
+
+    for instance_type in INSTANCE_TYPES:
+        summary_rows.extend(
+            _build_summary_for_type(
+                detail_rows=detail_rows,
+                instance_type_filter=instance_type,
+                summary_instance_type=instance_type,
+            )
+        )
+
+    summary_rows.sort(
+        key=lambda row: (
+            str(row["instance_type"]),
+            int(row["customers"]),
+            str(row["solver"]),
+            int(row.get("solver_parallel_jobs", 1) or 1),
+        )
+    )
+
+    return summary_rows
+
+
 # ===============================================================
 #  Plotting
 # ===============================================================
 
-def _plot_metric(
+def _solver_label(solver: str, jobs: int) -> str:
+    if solver in PARALLEL_SOLVER_NAMES:
+        return f"{solver} ({jobs} cores)"
+
+    return solver
+
+
+def _plot_no_data(plot_path: Path, message: str) -> None:
+    plt.text(
+        0.5,
+        0.5,
+        message,
+        ha="center",
+        va="center",
+    )
+    plt.axis("off")
+    plt.tight_layout()
+    plt.savefig(plot_path, dpi=200)
+    plt.close()
+
+
+def _plot_metric_algorithm_comparison(
     summary_rows: List[Dict[str, Any]],
     y_key: str,
     ylabel: str,
     title: str,
     plot_path: Path,
+    instance_type: str,
 ) -> None:
+    """
+    Plot algorithm comparison for one instance type.
+
+    instance_type can be:
+      - "All"
+      - "Clustered"
+      - "Random"
+      - "Mixed"
+    """
     plt.figure(figsize=(9, 6))
 
     by_solver: Dict[str, List[tuple]] = defaultdict(list)
 
     for row in summary_rows:
+        if row.get("instance_type") != instance_type:
+            continue
+
         y = row.get(y_key, "")
 
         if y == "":
             continue
 
         jobs = int(row.get("solver_parallel_jobs", 1) or 1)
-
-        if row["solver"] in PARALLEL_SOLVER_NAMES:
-            label = f"{row['solver']} ({jobs} cores)"
-        else:
-            label = row["solver"]
+        label = _solver_label(row["solver"], jobs)
 
         by_solver[label].append(
             (
@@ -612,17 +782,10 @@ def _plot_metric(
         )
 
     if not by_solver:
-        plt.text(
-            0.5,
-            0.5,
-            f"No data available for {ylabel}",
-            ha="center",
-            va="center",
+        _plot_no_data(
+            plot_path,
+            f"No data available for {ylabel}\nInstance type: {instance_type}",
         )
-        plt.axis("off")
-        plt.tight_layout()
-        plt.savefig(plot_path, dpi=200)
-        plt.close()
         return
 
     for solver_label, pts in sorted(by_solver.items()):
@@ -647,6 +810,214 @@ def _plot_metric(
     plt.tight_layout()
     plt.savefig(plot_path, dpi=200)
     plt.close()
+
+
+def _plot_metric_solver_by_type(
+    summary_rows: List[Dict[str, Any]],
+    y_key: str,
+    ylabel: str,
+    title: str,
+    plot_path: Path,
+    solver_name: str,
+    solver_parallel_jobs: int,
+) -> None:
+    """
+    Plot one solver against itself across distribution types.
+
+    Lines:
+      - Clustered
+      - Random
+      - Mixed
+    """
+    plt.figure(figsize=(9, 6))
+
+    by_type: Dict[str, List[tuple]] = defaultdict(list)
+
+    for row in summary_rows:
+        if row.get("instance_type") not in INSTANCE_TYPES:
+            continue
+
+        if row.get("solver") != solver_name:
+            continue
+
+        row_jobs = int(row.get("solver_parallel_jobs", 1) or 1)
+
+        if row_jobs != solver_parallel_jobs:
+            continue
+
+        y = row.get(y_key, "")
+
+        if y == "":
+            continue
+
+        by_type[row["instance_type"]].append(
+            (
+                int(row["customers"]),
+                float(y),
+            )
+        )
+
+    if not by_type:
+        _plot_no_data(
+            plot_path,
+            f"No data available for {ylabel}\nSolver: {solver_name}",
+        )
+        return
+
+    # Keep a stable, meaningful order.
+    for instance_type in INSTANCE_TYPES:
+        pts = by_type.get(instance_type, [])
+
+        if not pts:
+            continue
+
+        pts.sort()
+
+        xs = [x for x, _ in pts]
+        ys = [y for _, y in pts]
+
+        plt.plot(
+            xs,
+            ys,
+            marker="o",
+            linewidth=2,
+            label=instance_type,
+        )
+
+    plt.xlabel("Number of customers")
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.grid(True, alpha=0.3)
+    plt.legend(title="Instance type")
+    plt.tight_layout()
+    plt.savefig(plot_path, dpi=200)
+    plt.close()
+
+
+def _make_all_plots(
+    summary_rows: List[Dict[str, Any]],
+    solver_names: List[str],
+    graphs_dir: Path,
+) -> Dict[str, Path]:
+    """
+    Create all metric plots.
+
+    For each metric:
+      1. Overall comparison across all instance types
+      2. Clustered comparison
+      3. Random comparison
+      4. Mixed comparison
+      5. Per-solver type comparison
+    """
+    plot_paths: Dict[str, Path] = {}
+
+    metric_specs = [
+        {
+            "metric_name": "runtime",
+            "y_key": "avg_time_sec",
+            "ylabel": "Average solve time (s)",
+            "title_base": "2E-EVRP runtime comparison",
+            "legacy_path": graphs_dir / "runtime_comparison.png",
+            "type_prefix": "runtime_comparison",
+            "self_prefix": "runtime_by_type",
+        },
+        {
+            "metric_name": "distance",
+            "y_key": "avg_distance",
+            "ylabel": "Average total distance",
+            "title_base": "2E-EVRP distance comparison",
+            "legacy_path": graphs_dir / "distance_comparison.png",
+            "type_prefix": "distance_comparison",
+            "self_prefix": "distance_by_type",
+        },
+        {
+            "metric_name": "evs",
+            "y_key": "avg_evs",
+            "ylabel": "Average number of EVs used",
+            "title_base": "2E-EVRP EV usage comparison",
+            "legacy_path": graphs_dir / "evs_comparison.png",
+            "type_prefix": "evs_comparison",
+            "self_prefix": "evs_by_type",
+        },
+    ]
+
+    # Determine actual solver/job combinations present in the summary.
+    solver_job_pairs = sorted({
+        (
+            row["solver"],
+            int(row.get("solver_parallel_jobs", 1) or 1),
+        )
+        for row in summary_rows
+        if row.get("instance_type") == INSTANCE_TYPE_ALL
+    })
+
+    # Preserve selected solver order where possible.
+    def solver_pair_sort_key(pair: tuple) -> tuple:
+        solver, jobs = pair
+
+        try:
+            idx = solver_names.index(solver)
+        except ValueError:
+            idx = 10**9
+
+        return (idx, solver, jobs)
+
+    solver_job_pairs.sort(key=solver_pair_sort_key)
+
+    for spec in metric_specs:
+        metric_name = spec["metric_name"]
+        y_key = spec["y_key"]
+        ylabel = spec["ylabel"]
+        title_base = spec["title_base"]
+
+        # 1. Overall comparison, legacy filename.
+        legacy_path = spec["legacy_path"]
+        plot_paths[f"{metric_name}_all"] = legacy_path
+
+        _plot_metric_algorithm_comparison(
+            summary_rows=summary_rows,
+            y_key=y_key,
+            ylabel=ylabel,
+            title=title_base,
+            plot_path=legacy_path,
+            instance_type=INSTANCE_TYPE_ALL,
+        )
+
+        # 2-4. Type-specific algorithm comparisons.
+        for instance_type in INSTANCE_TYPES:
+            type_slug = instance_type.lower()
+            type_path = graphs_dir / f"{spec['type_prefix']}_{type_slug}.png"
+            plot_paths[f"{metric_name}_{type_slug}"] = type_path
+
+            _plot_metric_algorithm_comparison(
+                summary_rows=summary_rows,
+                y_key=y_key,
+                ylabel=ylabel,
+                title=f"{title_base} — {instance_type}",
+                plot_path=type_path,
+                instance_type=instance_type,
+            )
+
+        # 5. Per-solver self comparison across instance types.
+        for solver_name, jobs in solver_job_pairs:
+            solver_slug = _safe_filename_part(
+                _solver_label(solver_name, jobs)
+            )
+
+            self_path = graphs_dir / f"{spec['self_prefix']}_{solver_slug}.png"
+            plot_paths[f"{metric_name}_by_type_{solver_slug}"] = self_path
+
+            _plot_metric_solver_by_type(
+                summary_rows=summary_rows,
+                y_key=y_key,
+                ylabel=ylabel,
+                title=f"{title_base} by input type — {_solver_label(solver_name, jobs)}",
+                plot_path=self_path,
+                solver_name=solver_name,
+                solver_parallel_jobs=jobs,
+            )
+
+    return plot_paths
 
 
 # ===============================================================
@@ -710,12 +1081,21 @@ def benchmark_algorithms(
     max_workers = max(1, int(max_workers))
     solver_parallel_jobs = max(1, int(solver_parallel_jobs))
 
+    type_counts: Dict[str, int] = defaultdict(int)
+    for path in instance_files:
+        type_counts[_instance_type_from_name(path)] += 1
+
     print(f"\nBenchmarking instances under: {data_root}")
     print(f"Saving outputs to          : {graphs_dir}")
     print(f"Algorithms                 : {', '.join(solver_names)}")
     print(f"Total instances            : {len(instance_files)}")
     print(f"Benchmark workers          : {max_workers}")
     print(f"Solver parallel jobs       : {solver_parallel_jobs}")
+
+    print("Instance types             : " + ", ".join(
+        f"{typ}={count}"
+        for typ, count in sorted(type_counts.items())
+    ))
 
     if timeout_sec is None:
         print("Per-run timeout            : none")
@@ -757,9 +1137,6 @@ def benchmark_algorithms(
 
     detail_csv = graphs_dir / "runtime_comparison_details.csv"
     summary_csv = graphs_dir / "runtime_comparison_summary.csv"
-    runtime_plot_path = graphs_dir / "runtime_comparison.png"
-    distance_plot_path = graphs_dir / "distance_comparison.png"
-    evs_plot_path = graphs_dir / "evs_comparison.png"
 
     _write_csv(
         detail_csv,
@@ -768,6 +1145,7 @@ def benchmark_algorithms(
             "instance",
             "instance_path",
             "customers",
+            "instance_type",
             "solver",
             "solver_parallel_jobs",
             "status",
@@ -783,6 +1161,7 @@ def benchmark_algorithms(
         summary_csv,
         summary_rows,
         fieldnames=[
+            "instance_type",
             "solver",
             "solver_parallel_jobs",
             "customers",
@@ -804,36 +1183,28 @@ def benchmark_algorithms(
         ],
     )
 
-    _plot_metric(
-        summary_rows,
-        y_key="avg_time_sec",
-        ylabel="Average solve time (s)",
-        title="2E-EVRP runtime comparison",
-        plot_path=runtime_plot_path,
+    plot_paths = _make_all_plots(
+        summary_rows=summary_rows,
+        solver_names=solver_names,
+        graphs_dir=graphs_dir,
     )
 
-    _plot_metric(
-        summary_rows,
-        y_key="avg_distance",
-        ylabel="Average total distance",
-        title="2E-EVRP distance comparison",
-        plot_path=distance_plot_path,
-    )
-
-    _plot_metric(
-        summary_rows,
-        y_key="avg_evs",
-        ylabel="Average number of EVs used",
-        title="2E-EVRP EV usage comparison",
-        plot_path=evs_plot_path,
-    )
+    print("\nGenerated plots:")
+    for key, path in sorted(plot_paths.items()):
+        print(f"  {key:<35}: {path}")
 
     return {
         "detail_csv": detail_csv,
         "summary_csv": summary_csv,
-        "runtime_plot_path": runtime_plot_path,
-        "distance_plot_path": distance_plot_path,
-        "evs_plot_path": evs_plot_path,
+
+        # Legacy return keys expected by main.py.
+        "runtime_plot_path": plot_paths["runtime_all"],
+        "distance_plot_path": plot_paths["distance_all"],
+        "evs_plot_path": plot_paths["evs_all"],
+
+        # New complete plot dictionary.
+        "plot_paths": plot_paths,
+
         "detail_rows": detail_rows,
         "summary_rows": summary_rows,
     }
