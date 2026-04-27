@@ -4,10 +4,11 @@
 #   1) solve one instance with GUI + image export
 #   2) benchmark algorithms on many instances + runtime plot
 #
-#  HPC/parallel benchmark support:
-#   - benchmark_workers: number of instances evaluated concurrently
-#   - solver_parallel_jobs: number of per-instance islands/processes
-#     used by ParallelALNS and ParallelMemetic
+#  Parallel/HPC behavior:
+#   - ALNS and Memetic are user-facing parallel-capable solvers.
+#   - If CPUs/islands = 1, they behave like ordinary single-island runs.
+#   - If CPUs/islands > 1, they run independent islands in parallel and
+#     return the best solution found.
 # -------------------------------------------------------------------
 
 import os
@@ -90,15 +91,78 @@ def ask_for_solver() -> str:
             "1: brute-force\n"
             "2: clarke-wright\n"
             "3: Adaptive Large Neighborhood Search\n"
-            "4: Memetic\n"
-            "5: Parallel ALNS\n"
-            "6: Parallel Memetic\n> "
+            "4: Memetic\n> "
         ).strip()
 
-        if p in {"1", "2", "3", "4", "5", "6"}:
+        if p in {"1", "2", "3", "4"}:
             return p
 
         print(f"'{p}' is not a valid option - try again.\n")
+
+
+def ask_for_benchmark_solvers() -> list[str]:
+    """
+    Repeatedly prompt the user to select benchmark algorithms.
+
+    ALNS and Memetic are parallel-capable:
+      - solver_parallel_jobs = 1 gives a single-island run
+      - solver_parallel_jobs > 1 gives a parallel island portfolio
+    """
+    options = {
+        "1": ("ClarkeWright", "Clarke-Wright"),
+        "2": ("ALNS", "Adaptive Large Neighborhood Search"),
+        "3": ("Memetic", "Memetic"),
+        "4": ("BruteForce", "Brute-force"),
+    }
+
+    selected: list[str] = []
+
+    while True:
+        print("\nSelect algorithms to benchmark.")
+        print("Choose one algorithm at a time.")
+        print("Press Enter or type 'done' when finished.\n")
+
+        for key, (_, label) in options.items():
+            marker = " [selected]" if options[key][0] in selected else ""
+            print(f"{key}: {label}{marker}")
+
+        print()
+
+        p = input("> ").strip().lower()
+
+        if p == "" or p in {"done", "q", "quit", "exit"}:
+            if selected:
+                break
+
+            print("Please select at least one algorithm before finishing.\n")
+            continue
+
+        if p not in options:
+            print(f"'{p}' is not a valid option - try again.\n")
+            continue
+
+        solver_name, label = options[p]
+
+        if solver_name in selected:
+            print(f"{label} is already selected.\n")
+            continue
+
+        selected.append(solver_name)
+        print(f"Added: {label}")
+
+    print("\nAlgorithms selected for benchmark:")
+
+    for solver_name in selected:
+        label = next(
+            label
+            for name, label in options.values()
+            if name == solver_name
+        )
+        print(f"  - {label}")
+
+    print()
+
+    return selected
 
 
 def ask_for_directory(default_dir: Path, label: str) -> Path:
@@ -125,8 +189,10 @@ def ask_for_timeout(prompt: str) -> Optional[float]:
 
         try:
             val = float(p)
+
             if val > 0:
                 return val
+
         except ValueError:
             pass
 
@@ -147,8 +213,10 @@ def ask_for_int(
 
         try:
             val = int(p)
+
             if min_val <= val <= max_val:
                 return val
+
         except ValueError:
             pass
 
@@ -161,7 +229,7 @@ def ask_for_benchmark_parallelism() -> Tuple[int, int]:
       1. benchmark-level parallelism:
            number of instances evaluated concurrently
       2. solver-level parallelism:
-           number of islands/processes per ParallelALNS/ParallelMemetic run
+           number of islands/processes per ALNS/Memetic run
 
     Returns
     -------
@@ -177,7 +245,7 @@ def ask_for_benchmark_parallelism() -> Tuple[int, int]:
     then the benchmark runs approximately:
 
         4 instances at the same time,
-        each ParallelALNS/ParallelMemetic instance using 16 islands.
+        each ALNS/Memetic instance using 16 islands.
     """
     available = available_cpu_count()
 
@@ -187,8 +255,8 @@ def ask_for_benchmark_parallelism() -> Tuple[int, int]:
 
     solver_parallel_jobs = ask_for_int(
         prompt=(
-            "CPUs/islands per solver instance for "
-            "ParallelALNS/ParallelMemetic"
+            "CPUs/islands per solver instance for ALNS/Memetic "
+            "(1 = ordinary single-island run)"
         ),
         default=default_solver_jobs,
         min_val=1,
@@ -220,16 +288,15 @@ def ask_for_benchmark_parallelism() -> Tuple[int, int]:
 def solver_num_to_name(solver_num: str) -> str:
     if solver_num == "1":
         return "BruteForce"
+
     if solver_num == "2":
         return "ClarkeWright"
+
     if solver_num == "3":
         return "ALNS"
+
     if solver_num == "4":
         return "Memetic"
-    if solver_num == "5":
-        return "ParallelALNS"
-    if solver_num == "6":
-        return "ParallelMemetic"
 
     raise ValueError(f"Unknown solver selection: {solver_num}")
 
@@ -254,13 +321,16 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
 
     solver_parallel_jobs = 1
 
-    if solver_name in {"ParallelALNS", "ParallelMemetic"}:
+    if solver_name in {"ALNS", "Memetic"}:
         available = available_cpu_count()
 
         print(f"\nCPUs available according to system/scheduler: {available}")
 
         solver_parallel_jobs = ask_for_int(
-            prompt="CPUs/islands to use for this solver instance",
+            prompt=(
+                f"CPUs/islands to use for {solver_name} "
+                "(1 = ordinary single-island run)"
+            ),
             default=min(16, available),
             min_val=1,
             max_val=available,
@@ -300,7 +370,7 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     print(f"Algorithm         : {solver_name}")
     print(f"Solve time        : {wrapped['time_sec']:.3f} s")
 
-    if solver_name in {"ParallelALNS", "ParallelMemetic"}:
+    if solver_name in {"ALNS", "Memetic"}:
         print(f"Parallel islands  : {solver_parallel_jobs}")
 
         if "parallel_workers" in result:
@@ -348,6 +418,8 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
         "Enter benchmark data directory",
     )
 
+    solver_names = ask_for_benchmark_solvers()
+
     timeout_sec = ask_for_timeout(
         "Per-run wall-clock timeout in seconds "
         "(recommended for HPC comparison: 10; press Enter for no timeout)\n> "
@@ -358,18 +430,7 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     result = benchmark_algorithms(
         data_root=data_dir,
         graphs_dir=graphs_dir,
-
-        # Clarke-Wright is mostly deterministic and generally should be
-        # parallelized across instances rather than within one instance.
-        #
-        # ParallelALNS and ParallelMemetic use solver_parallel_jobs
-        # independent islands per instance.
-        solver_names=[
-            "ClarkeWright",
-            "ParallelALNS",
-            "ParallelMemetic",
-        ],
-
+        solver_names=solver_names,
         timeout_sec=timeout_sec,
         max_workers=benchmark_workers,
         solver_parallel_jobs=solver_parallel_jobs,

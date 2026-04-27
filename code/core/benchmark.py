@@ -6,8 +6,18 @@
 #    - benchmark-level multiprocessing:
 #        multiple instance files evaluated concurrently
 #    - solver-level multiprocessing:
-#        ParallelALNS / ParallelMemetic can use multiple islands
-#        per instance through solver_parallel_jobs
+#        ALNS / Memetic can use multiple islands per instance
+#        through solver_parallel_jobs
+#
+#  User-facing behavior:
+#    - ALNS with solver_parallel_jobs = 1:
+#        ordinary single-island ALNS
+#    - ALNS with solver_parallel_jobs > 1:
+#        parallel multi-start/island ALNS
+#    - Memetic with solver_parallel_jobs = 1:
+#        ordinary single-island Memetic
+#    - Memetic with solver_parallel_jobs > 1:
+#        parallel island Memetic
 #
 #  Saves:
 #    - graphs/runtime_comparison.png
@@ -40,13 +50,14 @@ from core.solver_runner import solve_with_optional_timeout
 
 DEFAULT_SOLVER_NAMES = [
     "ClarkeWright",
-    "ParallelALNS",
-    "ParallelMemetic",
+    "ALNS",
+    "Memetic",
 ]
 
+# These public solver names are internally parallel-capable.
 PARALLEL_SOLVER_NAMES = {
-    "ParallelALNS",
-    "ParallelMemetic",
+    "ALNS",
+    "Memetic",
 }
 
 
@@ -94,6 +105,7 @@ def _instance_size_key(path: Path) -> str:
 def _sort_size_key(x: str) -> Any:
     if str(x).isdigit():
         return int(x)
+
     return str(x)
 
 
@@ -163,8 +175,15 @@ def _effective_solver_parallel_jobs(
     solver_parallel_jobs: int,
 ) -> int:
     """
-    Only the explicit parallel portfolio solvers use solver_parallel_jobs.
-    Deterministic/non-portfolio solvers run single-core per instance.
+    ALNS and Memetic are inherently parallel-capable.
+
+    If solver_parallel_jobs == 1:
+        they behave like their ordinary single-island versions.
+
+    If solver_parallel_jobs > 1:
+        they launch multiple independent islands and return the best.
+
+    Other solvers run single-core per instance.
     """
     if solver_name in PARALLEL_SOLVER_NAMES:
         return max(1, int(solver_parallel_jobs))
@@ -243,7 +262,7 @@ def _benchmark_instance_subset(
             )
 
             print(
-                f"{prefix}  - {solver_name:<17} "
+                f"{prefix}  - {solver_name:<13} "
                 f"jobs={effective_jobs:<3} ... ",
                 end="",
                 flush=True,
@@ -656,7 +675,11 @@ def benchmark_algorithms(
     solver_names:
         Solvers to run. Recommended for HPC comparison:
 
-            ["ClarkeWright", "ParallelALNS", "ParallelMemetic"]
+            ["ClarkeWright", "ALNS", "Memetic"]
+
+        ALNS and Memetic are parallel-capable. With solver_parallel_jobs=1,
+        they run as single-island/sequential versions. With
+        solver_parallel_jobs>1, they run as parallel portfolios.
 
     timeout_sec:
         Wall-clock timeout per solver-instance run.
@@ -667,8 +690,8 @@ def benchmark_algorithms(
         evaluated concurrently.
 
     solver_parallel_jobs:
-        Number of islands/processes used inside ParallelALNS and
-        ParallelMemetic for each individual instance.
+        Number of islands/processes used inside ALNS and Memetic for each
+        individual instance.
     """
     data_root = Path(data_root)
     graphs_dir = Path(graphs_dir)

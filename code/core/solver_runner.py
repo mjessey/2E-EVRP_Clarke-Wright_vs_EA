@@ -4,9 +4,19 @@
 #    - runs a solver once
 #    - optionally enforces a timeout using multiprocessing
 #    - passes timeout cooperatively to solvers that support it
-#    - passes solver_parallel_jobs to parallel portfolio solvers
+#    - passes solver_parallel_jobs to parallel-capable solvers
 #    - safely serialises/deserialises Solution objects so they
 #      can cross process boundaries
+#
+#  User-facing behavior:
+#    - "ALNS" maps to ParallelALNS
+#    - "Memetic" maps to ParallelMemetic
+#
+#  Therefore:
+#    - solver_parallel_jobs = 1:
+#        ordinary single-island ALNS/Memetic behavior
+#    - solver_parallel_jobs > 1:
+#        parallel portfolio/island behavior
 # ---------------------------------------------------------------
 
 from __future__ import annotations
@@ -21,20 +31,22 @@ from core.evaluator import Solution
 
 from solvers.brute_force import BruteForce
 from solvers.clarke_wright import ClarkeWright
-from solvers.neighborhood_search import ALNS
-from solvers.memetic import MemeticAlgorithm
 from solvers.parallel_portfolio import ParallelALNS, ParallelMemetic
 
 
 SOLVER_FACTORIES = {
     "BruteForce": BruteForce,
     "ClarkeWright": ClarkeWright,
-    "ALNS": ALNS,
-    "Memetic": MemeticAlgorithm,
 
-    # Parallel portfolio / island-model variants.
-    "ParallelALNS": ParallelALNS,
-    "ParallelMemetic": ParallelMemetic,
+    # Public ALNS/Memetic names are now inherently parallel-capable.
+    #
+    # If solver_parallel_jobs == 1:
+    #   ParallelALNS / ParallelMemetic directly call one sequential island.
+    #
+    # If solver_parallel_jobs > 1:
+    #   they launch multiple independent islands and return the best.
+    "ALNS": ParallelALNS,
+    "Memetic": ParallelMemetic,
 }
 
 
@@ -126,10 +138,10 @@ def _build_solver(
     """
     Instantiate a solver.
 
-    Parallel portfolio solvers accept:
+    ALNS and Memetic are mapped to parallel-capable portfolio wrappers.
+    These wrappers accept:
 
-        ParallelALNS(n_jobs=...)
-        ParallelMemetic(n_jobs=...)
+        n_jobs=solver_parallel_jobs
 
     Ordinary solvers ignore solver_parallel_jobs.
     """
@@ -178,7 +190,7 @@ def solve_once(
         Optional cooperative time limit.
 
     solver_parallel_jobs:
-        Number of internal jobs/islands for parallel portfolio solvers.
+        Number of internal jobs/islands for parallel-capable solvers.
         Ignored by ordinary solvers.
     """
     try:
@@ -204,7 +216,7 @@ def solve_once(
         #
         #   solve(data, time_limit_sec=...)
         #
-        # ParallelPortfolioSolver and the modified MemeticAlgorithm support it.
+        # ParallelPortfolioSolver, ALNS, and MemeticAlgorithm support it.
         if _solver_accepts_time_limit(solver):
             result = solver.solve(data, time_limit_sec=timeout_sec)
         else:
@@ -268,7 +280,7 @@ def solve_with_optional_timeout(
         - Allow a small grace period for graceful return.
         - If still running after timeout + grace, terminate process.
 
-    For ParallelALNS and ParallelMemetic:
+    For ALNS and Memetic:
         solver_parallel_jobs controls how many independent islands are
         launched inside the solver process.
     """
