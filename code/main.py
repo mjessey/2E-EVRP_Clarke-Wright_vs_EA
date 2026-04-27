@@ -20,6 +20,7 @@ from core.parser import Parser
 from core.evaluator import Evaluator
 
 from core.benchmark import benchmark_algorithms
+from core.scaling_benchmark import benchmark_scaling_experiments
 from core.solver_runner import solve_with_optional_timeout
 
 from gui.gui import GUI
@@ -60,10 +61,11 @@ def ask_for_mode() -> str:
         p = input(
             "Choose mode:\n"
             "1: Solve one instance\n"
-            "2: Benchmark algorithms\n> "
+            "2: Benchmark algorithms\n"
+            "3: Scaling benchmark for ALNS/Memetic cores/time\n> "
         ).strip()
 
-        if p in {"1", "2"}:
+        if p in {"1", "2", "3"}:
             return p
 
         print(f"'{p}' is not a valid option - try again.\n")
@@ -412,6 +414,38 @@ def run_single_instance(instance_path: Path, graphs_dir: Path) -> None:
     ).run()
 
 
+def run_scaling_benchmark(project_root: Path, graphs_dir: Path) -> None:
+    data_dir = ask_for_directory(
+        project_root / "data",
+        "Enter benchmark data directory",
+    )
+
+    available = available_cpu_count()
+
+    print(f"\nCPUs available according to system/scheduler: {available}")
+
+    cpus_for_scaling = ask_for_int(
+        prompt="How many CPUs should be available to the scaling benchmark?",
+        default=available,
+        min_val=1,
+        max_val=available,
+    )
+
+    result = benchmark_scaling_experiments(
+        data_root=data_dir,
+        graphs_dir=graphs_dir,
+        available_cpus=cpus_for_scaling,
+    )
+
+    print("\n-------------------------------------------------")
+    print(f"Scaling detail CSV  : {result['detail_csv']}")
+    print(f"Scaling summary CSV : {result['summary_csv']}")
+    print("Scaling plots:")
+    for key, path in sorted(result["plot_paths"].items()):
+        print(f"  {key:<30}: {path}")
+    print("-------------------------------------------------")
+
+
 def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     data_dir = ask_for_directory(
         project_root / "data",
@@ -456,6 +490,10 @@ def main() -> None:
         run_benchmark(project_root, graphs_dir)
         return
 
+    if len(sys.argv) >= 2 and sys.argv[1] == "--scaling":
+        run_scaling_benchmark(project_root, graphs_dir)
+        return
+
     if len(sys.argv) >= 2:
         instance_path = Path(sys.argv[1])
 
@@ -469,9 +507,12 @@ def main() -> None:
     if mode == "1":
         instance_path = ask_for_path()
         run_single_instance(instance_path, graphs_dir)
-    else:
+
+    elif mode == "2":
         run_benchmark(project_root, graphs_dir)
 
+    else:
+        run_scaling_benchmark(project_root, graphs_dir)
 
 # -------------------------------------------------------------------
 if __name__ == "__main__":
