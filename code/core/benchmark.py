@@ -894,6 +894,82 @@ def _plot_metric_solver_by_type(
     plt.close()
 
 
+def _plot_metric_single_solver_overall(
+    summary_rows: List[Dict[str, Any]],
+    y_key: str,
+    ylabel: str,
+    title: str,
+    plot_path: Path,
+    solver_name: str,
+    solver_parallel_jobs: int,
+) -> None:
+    """
+    Plot one solver by itself using all instance types averaged together.
+
+    This is useful when one algorithm is much faster/slower than another.
+    For example, Clarke-Wright may appear as a flat line when plotted
+    against ALNS, so this plot gives Clarke-Wright its own y-axis scale.
+    """
+    plt.figure(figsize=(9, 6))
+
+    pts: List[tuple] = []
+
+    for row in summary_rows:
+        if row.get("instance_type") != INSTANCE_TYPE_ALL:
+            continue
+
+        if row.get("solver") != solver_name:
+            continue
+
+        row_jobs = int(row.get("solver_parallel_jobs", 1) or 1)
+
+        if row_jobs != solver_parallel_jobs:
+            continue
+
+        y = row.get(y_key, "")
+
+        if y == "":
+            continue
+
+        pts.append(
+            (
+                int(row["customers"]),
+                float(y),
+            )
+        )
+
+    if not pts:
+        _plot_no_data(
+            plot_path,
+            f"No data available for {ylabel}\nSolver: {solver_name}",
+        )
+        return
+
+    pts.sort()
+
+    xs = [x for x, _ in pts]
+    ys = [y for _, y in pts]
+
+    label = _solver_label(solver_name, solver_parallel_jobs)
+
+    plt.plot(
+        xs,
+        ys,
+        marker="o",
+        linewidth=2,
+        label=label,
+    )
+
+    plt.xlabel("Number of customers")
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(plot_path, dpi=200)
+    plt.close()
+
+
 def _make_all_plots(
     summary_rows: List[Dict[str, Any]],
     solver_names: List[str],
@@ -998,7 +1074,32 @@ def _make_all_plots(
                 instance_type=instance_type,
             )
 
-        # 5. Per-solver self comparison across instance types.
+        # 5. Per-solver overall plot.
+        #
+        # This uses instance_type == "All", meaning Clustered, Random,
+        # and Mixed are averaged together. It gives each solver its own
+        # y-axis scale.
+        for solver_name, jobs in solver_job_pairs:
+            solver_slug = _safe_filename_part(
+                _solver_label(solver_name, jobs)
+            )
+
+            single_path = graphs_dir / f"{metric_name}_single_{solver_slug}.png"
+            plot_paths[f"{metric_name}_single_{solver_slug}"] = single_path
+
+            _plot_metric_single_solver_overall(
+                summary_rows=summary_rows,
+                y_key=y_key,
+                ylabel=ylabel,
+                title=f"{title_base} — {_solver_label(solver_name, jobs)}",
+                plot_path=single_path,
+                solver_name=solver_name,
+                solver_parallel_jobs=jobs,
+            )
+
+        # 6. Per-solver self comparison across instance types.
+        #
+        # This compares Clustered vs Random vs Mixed for one solver.
         for solver_name, jobs in solver_job_pairs:
             solver_slug = _safe_filename_part(
                 _solver_label(solver_name, jobs)
