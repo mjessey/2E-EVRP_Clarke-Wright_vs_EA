@@ -5,6 +5,7 @@
 #    - optionally enforces a timeout using multiprocessing
 #    - passes timeout cooperatively to solvers that support it
 #    - passes solver_parallel_jobs to parallel-capable solvers
+#    - passes solver_options to solvers that support it
 #    - safely serialises/deserialises Solution objects so they
 #      can cross process boundaries
 #
@@ -17,6 +18,12 @@
 #        ordinary single-island ALNS/Memetic behavior
 #    - solver_parallel_jobs > 1:
 #        parallel portfolio/island behavior
+#
+#  solver_options is mainly used by scaling benchmarks, e.g.:
+#
+#      {"unlimited_iterations": True}
+#
+#  for time-controlled ALNS scaling experiments.
 # ---------------------------------------------------------------
 
 from __future__ import annotations
@@ -131,6 +138,17 @@ def _solver_accepts_time_limit(solver: Any) -> bool:
         return False
 
 
+def _solver_accepts_param(solver: Any, param_name: str) -> bool:
+    """
+    Return True if solver.solve supports a named parameter.
+    """
+    try:
+        sig = inspect.signature(solver.solve)
+        return param_name in sig.parameters
+    except Exception:
+        return False
+
+
 def _build_solver(
     solver_name: str,
     solver_parallel_jobs: int = 1,
@@ -171,6 +189,7 @@ def solve_once(
     data: Dict[str, Any],
     timeout_sec: Optional[float] = None,
     solver_parallel_jobs: int = 1,
+    solver_options: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run one solver once.
@@ -192,6 +211,12 @@ def solve_once(
     solver_parallel_jobs:
         Number of internal jobs/islands for parallel-capable solvers.
         Ignored by ordinary solvers.
+
+    solver_options:
+        Extra options passed to solvers that support solver_options.
+        Used by scaling benchmarks, e.g.:
+
+            {"unlimited_iterations": True}
     """
     try:
         solver = _build_solver(
@@ -212,13 +237,19 @@ def solve_once(
 
         t0 = time.perf_counter()
 
-        # Optional solve signature:
-        #
-        #   solve(data, time_limit_sec=...)
-        #
-        # ParallelPortfolioSolver, ALNS, and MemeticAlgorithm support it.
+        kwargs: Dict[str, Any] = {}
+
         if _solver_accepts_time_limit(solver):
-            result = solver.solve(data, time_limit_sec=timeout_sec)
+            kwargs["time_limit_sec"] = timeout_sec
+
+        if solver_options is not None and _solver_accepts_param(
+            solver,
+            "solver_options",
+        ):
+            kwargs["solver_options"] = solver_options
+
+        if kwargs:
+            result = solver.solve(data, **kwargs)
         else:
             result = solver.solve(data)
 
@@ -243,6 +274,7 @@ def _solve_worker(
     data: Dict[str, Any],
     timeout_sec: Optional[float],
     solver_parallel_jobs: int,
+    solver_options: Optional[Dict[str, Any]],
     queue: mp.Queue,
 ) -> None:
     """
@@ -254,6 +286,7 @@ def _solve_worker(
             data=data,
             timeout_sec=timeout_sec,
             solver_parallel_jobs=solver_parallel_jobs,
+            solver_options=solver_options,
         )
     )
 
@@ -267,6 +300,7 @@ def solve_with_optional_timeout(
     data: Dict[str, Any],
     timeout_sec: Optional[float],
     solver_parallel_jobs: int = 1,
+    solver_options: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Run solver with optional timeout.
@@ -283,6 +317,10 @@ def solve_with_optional_timeout(
     For ALNS and Memetic:
         solver_parallel_jobs controls how many independent islands are
         launched inside the solver process.
+
+    solver_options:
+        Optional dictionary forwarded to compatible solver wrappers.
+        Used by scaling benchmarks to enable ALNS unlimited iterations.
     """
     solver_parallel_jobs = max(1, int(solver_parallel_jobs))
 
@@ -293,6 +331,7 @@ def solve_with_optional_timeout(
             data=data,
             timeout_sec=None,
             solver_parallel_jobs=solver_parallel_jobs,
+            solver_options=solver_options,
         )
 
         if res["status"] == "ok":
@@ -310,6 +349,7 @@ def solve_with_optional_timeout(
             data,
             timeout_sec,
             solver_parallel_jobs,
+            solver_options,
             queue,
         ),
     )

@@ -10,6 +10,13 @@
 #
 # This is intended for HPC-style parallelization:
 #   wall-clock budget fixed, more CPUs -> more independent searches.
+#
+# Additional solver_options can be passed through to the underlying
+# solver. This is used by the scaling benchmark, for example:
+#
+#   solver_options = {"unlimited_iterations": True}
+#
+# for ALNS time-controlled scaling experiments.
 # ---------------------------------------------------------------
 
 from __future__ import annotations
@@ -46,6 +53,7 @@ def _call_solver(
     instance: Dict[str, Any],
     time_limit_sec: Optional[float],
     seed: Optional[int],
+    solver_options: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Call one underlying solver instance.
@@ -53,7 +61,11 @@ def _call_solver(
     Supports optional solver APIs:
       solve(instance, time_limit_sec=...)
       solve(instance, seed=...)
+      solve(instance, unlimited_iterations=...)
       solver.set_time_limit(...)
+
+    Extra options are passed through only if the underlying solver.solve()
+    accepts them.
     """
     solver_cls = PORTFOLIO_SOLVERS[base_solver_name]
     solver = solver_cls()
@@ -76,6 +88,11 @@ def _call_solver(
     if _accepts_kwarg(solve_fn, "seed"):
         kwargs["seed"] = seed
 
+    if solver_options:
+        for key, value in solver_options.items():
+            if _accepts_kwarg(solve_fn, key):
+                kwargs[key] = value
+
     if kwargs:
         return solve_fn(instance, **kwargs)
 
@@ -88,8 +105,12 @@ def _portfolio_worker(
     instance: Dict[str, Any],
     time_limit_sec: Optional[float],
     seed: int,
+    solver_options: Optional[Dict[str, Any]],
     result_queue: mp.Queue,
 ) -> None:
+    """
+    Worker for one independent solver island.
+    """
     t0 = time.perf_counter()
 
     try:
@@ -98,6 +119,7 @@ def _portfolio_worker(
             instance=instance,
             time_limit_sec=time_limit_sec,
             seed=seed,
+            solver_options=solver_options,
         )
 
         elapsed = time.perf_counter() - t0
@@ -127,6 +149,14 @@ def _portfolio_worker(
 class ParallelPortfolioSolver:
     """
     Base class for independent multi-start / island-model solvers.
+
+    Subclasses set:
+
+        BASE_SOLVER_NAME = "ALNS"
+
+    or:
+
+        BASE_SOLVER_NAME = "Memetic"
     """
 
     BASE_SOLVER_NAME: str = ""
@@ -144,14 +174,38 @@ class ParallelPortfolioSolver:
         instance: Dict[str, Any],
         time_limit_sec: Optional[float] = None,
         seed: Optional[int] = None,
+        solver_options: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
+        """
+        Run the parallel portfolio solver.
+
+        Parameters
+        ----------
+        instance:
+            Parsed 2E-EVRP instance.
+
+        time_limit_sec:
+            Wall-clock time limit for the whole portfolio.
+
+        seed:
+            Optional seed for reproducibility.
+
+        solver_options:
+            Extra options passed through to the underlying solver.
+            Example:
+
+                {"unlimited_iterations": True}
+
+            for ALNS scaling experiments.
+        """
         available = os.cpu_count() or 1
         n_jobs = max(1, min(self.n_jobs, available))
 
-        # For single-core mode, directly call the underlying solver.
-        #
-        # Still subtract a small safety margin so cooperative anytime
-        # solvers, especially Memetic, can return their best solution
+        # --------------------------------------------------------
+        # Single-core mode
+        # --------------------------------------------------------
+        # Even for a single island, subtract a small safety margin so
+        # cooperative anytime solvers can return their best solution
         # before the outer hard timeout kills the process.
         if n_jobs <= 1:
             single_time_limit = time_limit_sec
@@ -167,8 +221,12 @@ class ParallelPortfolioSolver:
                 instance=instance,
                 time_limit_sec=single_time_limit,
                 seed=seed,
+                solver_options=solver_options,
             )
 
+        # --------------------------------------------------------
+        # Multi-core / multi-island mode
+        # --------------------------------------------------------
         if time_limit_sec is not None:
             island_time_limit = max(
                 0.1,
@@ -195,6 +253,7 @@ class ParallelPortfolioSolver:
                     instance,
                     island_time_limit,
                     worker_seed,
+                    solver_options,
                     result_queue,
                 ),
             )
@@ -211,8 +270,9 @@ class ParallelPortfolioSolver:
             try:
                 msg = result_queue.get(timeout=0.05)
                 messages[msg["worker_id"]] = msg
+
             except queue.Empty:
-                if all(not p.is_alive() for p in processes):
+                if all(not proc.is_alive() for proc in processes):
                     break
 
         # Terminate stragglers once the global wall-clock budget is reached.
@@ -245,7 +305,10 @@ class ParallelPortfolioSolver:
                     "evs": "",
                     "distance": "",
                     "solution_found": False,
-                    "error": "Worker exited or was terminated without returning a result.",
+                    "error": (
+                        "Worker exited or was terminated without "
+                        "returning a result."
+                    ),
                 })
                 continue
 
@@ -285,6 +348,7 @@ class ParallelPortfolioSolver:
                 "parallel_workers": n_jobs,
                 "base_solver": self.BASE_SOLVER_NAME,
                 "island_summaries": island_summaries,
+                "solver_options": solver_options or {},
             }
 
         def result_key(r: Dict[str, Any]) -> Tuple[float, int]:
@@ -299,6 +363,7 @@ class ParallelPortfolioSolver:
         out["parallel_workers"] = n_jobs
         out["base_solver"] = self.BASE_SOLVER_NAME
         out["island_summaries"] = island_summaries
+        out["solver_options"] = solver_options or {}
 
         return out
 

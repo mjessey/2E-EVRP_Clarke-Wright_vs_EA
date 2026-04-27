@@ -12,7 +12,9 @@
 #    A. ALNS core scaling
 #       - customer size fixed at 100
 #       - solve time fixed at 10 seconds
-#       - core counts: 1, 2, 4, 8, 16
+#       - core counts: 1, 2, 4, 8
+#       - ALNS ignores MAX_ITERATIONS in this scaling benchmark
+#         and stops by time.
 #       - plots:
 #           average distance vs core count
 #           average EVs vs core count
@@ -20,15 +22,25 @@
 #    B. Memetic core scaling
 #       - customer size fixed at 100
 #       - solve time fixed at 10 seconds
-#       - core counts: 1, 2, 4, 8, 16
+#       - core counts: 1, 2, 4, 8
 #       - plots:
 #           average distance vs core count
 #           average EVs vs core count
 #
-#    C. Memetic time scaling
+#    C. ALNS time scaling
 #       - customer size fixed at 100
 #       - cores fixed at 1
-#       - solve times: 2, 4, 6, 8, 10 seconds
+#       - solve times: 5, 10, 15 seconds
+#       - ALNS ignores MAX_ITERATIONS in this scaling benchmark
+#         and stops by time.
+#       - plots:
+#           average distance vs solve time
+#           average EVs vs solve time
+#
+#    D. Memetic time scaling
+#       - customer size fixed at 100
+#       - cores fixed at 1
+#       - solve times: 5, 10, 15 seconds
 #       - plots:
 #           average distance vs solve time
 #           average EVs vs solve time
@@ -45,6 +57,9 @@
 #
 #    graphs/scaling_ALNS_distance_vs_cores.png
 #    graphs/scaling_ALNS_evs_vs_cores.png
+#    graphs/scaling_ALNS_distance_vs_time.png
+#    graphs/scaling_ALNS_evs_vs_time.png
+#
 #    graphs/scaling_Memetic_distance_vs_cores.png
 #    graphs/scaling_Memetic_evs_vs_cores.png
 #    graphs/scaling_Memetic_distance_vs_time.png
@@ -71,7 +86,7 @@ from core.parser import Parser
 from core.solver_runner import solve_with_optional_timeout
 
 
-CORE_COUNTS = [1, 2, 4, 8, 16]
+CORE_COUNTS = [1, 2, 4, 8]
 SOLVE_TIMES_SEC = [5, 10, 15]
 
 CUSTOMER_SIZE = 100
@@ -126,10 +141,6 @@ def _instance_type_from_name(path: Path) -> str:
     return "Unknown"
 
 
-def _safe_filename_part(s: str) -> str:
-    return re.sub(r"[^A-Za-z0-9_.-]+", "_", str(s)).strip("_")
-
-
 def _find_customer_100_instances(data_root: Path) -> List[Path]:
     """
     Prefer data_root/Customer_100 if it exists.
@@ -137,7 +148,6 @@ def _find_customer_100_instances(data_root: Path) -> List[Path]:
     Customer_100.
     """
     data_root = Path(data_root)
-
     customer_100_dir = data_root / "Customer_100"
 
     if customer_100_dir.exists() and customer_100_dir.is_dir():
@@ -194,11 +204,17 @@ def _chunk_type_counts(chunk: List[Path]) -> Dict[str, int]:
     return dict(sorted(counts.items()))
 
 
-def _solver_label(solver_name: str, cores: int) -> str:
-    if solver_name in {"ALNS", "Memetic"}:
-        return f"{solver_name} ({cores} cores)"
+def _alns_scaling_options(solver_name: str) -> Optional[Dict[str, Any]]:
+    """
+    In the scaling benchmark only, ALNS ignores MAX_ITERATIONS and
+    stops by time. Normal benchmarks do not use this option.
+    """
+    if solver_name == "ALNS":
+        return {
+            "unlimited_iterations": True,
+        }
 
-    return solver_name
+    return None
 
 
 # ===============================================================
@@ -214,6 +230,7 @@ def _run_subset_for_scaling_point(
     solver_parallel_jobs: int,
     timeout_sec: float,
     worker_id: Optional[int] = None,
+    solver_options: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     """
     Run one experiment point on a subset of Customer_100 instances.
@@ -251,9 +268,14 @@ def _run_subset_for_scaling_point(
             })
             continue
 
+        options_text = ""
+        if solver_options:
+            options_text = f" options={solver_options}"
+
         print(
             f"{prefix}{experiment} | {solver_name} | "
-            f"{x_label}={x_value} | jobs={solver_parallel_jobs} | "
+            f"{x_label}={x_value:g} | jobs={solver_parallel_jobs} | "
+            f"timeout={timeout_sec:g}s{options_text} | "
             f"{instance_path.name} ({instance_type}) ... ",
             end="",
             flush=True,
@@ -264,6 +286,7 @@ def _run_subset_for_scaling_point(
             data=data,
             timeout_sec=timeout_sec,
             solver_parallel_jobs=solver_parallel_jobs,
+            solver_options=solver_options,
         )
 
         if res["status"] == "ok":
@@ -359,6 +382,7 @@ def _scaling_worker(
     x_label: str,
     solver_parallel_jobs: int,
     timeout_sec: float,
+    solver_options: Optional[Dict[str, Any]],
     result_queue: mp.Queue,
 ) -> None:
     try:
@@ -371,6 +395,7 @@ def _scaling_worker(
             solver_parallel_jobs=solver_parallel_jobs,
             timeout_sec=timeout_sec,
             worker_id=worker_id,
+            solver_options=solver_options,
         )
 
         result_queue.put({
@@ -398,6 +423,7 @@ def _run_scaling_point_parallel(
     solver_parallel_jobs: int,
     timeout_sec: float,
     available_cpus: int,
+    solver_options: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     """
     Run one scaling point.
@@ -420,9 +446,10 @@ def _run_scaling_point_parallel(
     print("\n-------------------------------------------------")
     print(f"Experiment              : {experiment}")
     print(f"Solver                  : {solver_name}")
-    print(f"{x_label:<23}: {x_value}")
+    print(f"{x_label:<23}: {x_value:g}")
     print(f"Timeout                 : {timeout_sec:.1f} s")
     print(f"Solver parallel jobs    : {solver_parallel_jobs}")
+    print(f"Solver options          : {solver_options or {}}")
     print(f"Available CPUs          : {available_cpus}")
     print(f"Benchmark workers       : {len(chunks)}")
 
@@ -448,6 +475,7 @@ def _run_scaling_point_parallel(
                 x_label,
                 solver_parallel_jobs,
                 timeout_sec,
+                solver_options,
                 result_queue,
             ),
         )
@@ -535,6 +563,7 @@ def _summarize_type(
         ]
 
     ok_rows = [r for r in subset if r.get("status") == "ok"]
+
     sol_rows = [
         r for r in ok_rows
         if r.get("solution_found")
@@ -749,6 +778,26 @@ def _make_scaling_plots(
             "path": graphs_dir / "scaling_ALNS_evs_vs_cores.png",
         },
         {
+            "key": "alns_distance_vs_time",
+            "experiment": "time_scaling",
+            "solver": "ALNS",
+            "x_label": "solve_time_sec",
+            "y_key": "avg_distance",
+            "ylabel": "Average distance",
+            "title": "ALNS average distance vs solve time",
+            "path": graphs_dir / "scaling_ALNS_distance_vs_time.png",
+        },
+        {
+            "key": "alns_evs_vs_time",
+            "experiment": "time_scaling",
+            "solver": "ALNS",
+            "x_label": "solve_time_sec",
+            "y_key": "avg_evs",
+            "ylabel": "Average EVs used",
+            "title": "ALNS average EVs vs solve time",
+            "path": graphs_dir / "scaling_ALNS_evs_vs_time.png",
+        },
+        {
             "key": "memetic_distance_vs_cores",
             "experiment": "core_scaling",
             "solver": "Memetic",
@@ -835,11 +884,11 @@ def benchmark_scaling_experiments(
 
     core_counts:
         Core/island counts to test for ALNS and Memetic. Default:
-            [1, 2, 4, 8, 16]
+            [1, 2, 4, 8]
 
     solve_times_sec:
-        Solve times to test for Memetic with one core. Default:
-            [2, 4, 6, 8, 10]
+        Solve times to test for ALNS and Memetic with one core. Default:
+            [5, 10, 15]
     """
     data_root = Path(data_root)
     graphs_dir = Path(graphs_dir)
@@ -855,8 +904,15 @@ def benchmark_scaling_experiments(
 
     # Do not test more solver cores than are available.
     core_counts = [
-        c for c in core_counts
+        int(c)
+        for c in core_counts
         if 1 <= int(c) <= available_cpus
+    ]
+
+    solve_times_sec = [
+        int(t)
+        for t in solve_times_sec
+        if int(t) > 0
     ]
 
     if not core_counts:
@@ -864,9 +920,13 @@ def benchmark_scaling_experiments(
             f"No valid core counts for available_cpus={available_cpus}"
         )
 
+    if not solve_times_sec:
+        raise ValueError("No valid solve times were provided.")
+
     instance_files = _find_customer_100_instances(data_root)
 
     type_counts: Dict[str, int] = defaultdict(int)
+
     for path in instance_files:
         type_counts[_instance_type_from_name(path)] += 1
 
@@ -883,6 +943,7 @@ def benchmark_scaling_experiments(
     print("Instance types         : " + ", ".join(
         f"{typ}={count}" for typ, count in sorted(type_counts.items())
     ))
+    print("ALNS scaling mode      : unlimited iterations, time-limited")
     print("=================================================")
 
     detail_rows: List[Dict[str, Any]] = []
@@ -892,6 +953,8 @@ def benchmark_scaling_experiments(
     # ------------------------------------------------------------
     for solver_name in ["ALNS", "Memetic"]:
         for core_count in core_counts:
+            solver_options = _alns_scaling_options(solver_name)
+
             rows = _run_scaling_point_parallel(
                 instance_files=instance_files,
                 experiment="core_scaling",
@@ -901,26 +964,31 @@ def benchmark_scaling_experiments(
                 solver_parallel_jobs=int(core_count),
                 timeout_sec=FIXED_CORE_SCALING_TIME_SEC,
                 available_cpus=available_cpus,
+                solver_options=solver_options,
             )
 
             detail_rows.extend(rows)
 
     # ------------------------------------------------------------
-    # Time scaling for Memetic only, single core
+    # Time scaling for ALNS and Memetic, single core
     # ------------------------------------------------------------
-    for solve_time_sec in solve_times_sec:
-        rows = _run_scaling_point_parallel(
-            instance_files=instance_files,
-            experiment="time_scaling",
-            solver_name="Memetic",
-            x_value=float(solve_time_sec),
-            x_label="solve_time_sec",
-            solver_parallel_jobs=1,
-            timeout_sec=float(solve_time_sec),
-            available_cpus=available_cpus,
-        )
+    for solver_name in ["ALNS", "Memetic"]:
+        for solve_time_sec in solve_times_sec:
+            solver_options = _alns_scaling_options(solver_name)
 
-        detail_rows.extend(rows)
+            rows = _run_scaling_point_parallel(
+                instance_files=instance_files,
+                experiment="time_scaling",
+                solver_name=solver_name,
+                x_value=float(solve_time_sec),
+                x_label="solve_time_sec",
+                solver_parallel_jobs=1,
+                timeout_sec=float(solve_time_sec),
+                available_cpus=available_cpus,
+                solver_options=solver_options,
+            )
+
+            detail_rows.extend(rows)
 
     detail_rows.sort(
         key=lambda r: (
