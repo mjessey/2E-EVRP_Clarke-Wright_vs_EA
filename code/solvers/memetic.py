@@ -84,10 +84,10 @@ class MemeticAlgorithm:
     """
 
     # ---- parameters from paper Table 1 -------------------------
-    POP_SIZE = 15       # np: population size
+    POP_SIZE = 6       # np: population size
     DELTA = 0.7         # δ: quality vs diversity balance
-    K_GREEDY = 3        # k: k-Pseudo Greedy candidates
-    MAX_TIME = 180.0    # seconds: default stopping criterion
+    K_GREEDY = 2        # k: k-Pseudo Greedy candidates
+    MAX_TIME = 10.0    # seconds: default stopping criterion
 
     # ------------------------------------------------------------
     def solve(
@@ -190,7 +190,7 @@ class MemeticAlgorithm:
             # For 10-second runs, this prevents 15 * 2s initialization.
             remaining_individuals = max(1, len(population) - idx)
             ls_limit = min(
-                2.0,
+                0.5,
                 max(0.05, remaining / (remaining_individuals + 3)),
             )
 
