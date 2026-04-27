@@ -87,10 +87,10 @@ from core.solver_runner import solve_with_optional_timeout
 
 
 CORE_COUNTS = [1, 2, 4, 8]
-SOLVE_TIMES_SEC = [5, 10, 15]
+SOLVE_TIMES_SEC = [4, 7, 10]
 
-CUSTOMER_SIZE = 100
-FIXED_CORE_SCALING_TIME_SEC = 10.0
+CUSTOMER_SIZE = 50
+FIXED_CORE_SCALING_TIME_SEC = 7.0
 
 INSTANCE_TYPES = ["Clustered", "Random", "Mixed"]
 INSTANCE_TYPE_ALL = "All"
