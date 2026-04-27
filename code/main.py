@@ -253,7 +253,7 @@ def ask_for_benchmark_parallelism() -> Tuple[int, int]:
 
     print(f"\nCPUs available according to system/scheduler: {available}")
 
-    default_solver_jobs = min(16, available)
+    default_solver_jobs = min(8, available)
 
     solver_parallel_jobs = ask_for_int(
         prompt=(
@@ -468,12 +468,12 @@ def run_benchmark(project_root: Path, graphs_dir: Path) -> None:
     timeout_sec = None
 
     solver_timeouts = {
-        "ALNS": None,
+        "ALNS": 15.0,
         "Memetic": 10.0,
     }
 
     print("\nPer-solver timeout policy:")
-    print("  ALNS    : no wall-clock timeout")
+    print("  ALNS    : 15.0 seconds")
     print("  Memetic : 10.0 seconds")
     print("  Others  : no wall-clock timeout")
 

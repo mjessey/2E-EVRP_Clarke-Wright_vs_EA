@@ -1,0 +1,90 @@
+SLURM_JOB_ID: 567956
+CPUs per task: 24
+Node list: node004
+Working directory: /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA
+Python: /home/tntech.edu/mojessey42/.conda/envs/tdmpc2/bin/python
+Conda env: evrp_env
+pygame 2.6.1 (SDL 2.28.4, Python 3.10.19)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Choose mode:
+1: Solve one instance
+2: Benchmark algorithms
+3: Scaling benchmark for ALNS/Memetic cores/time
+> Enter benchmark data directory [default: /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/data]
+> 
+CPUs available according to system/scheduler: 24
+How many CPUs should be available to the scaling benchmark? [default: 24]
+> 
+=================================================
+Scaling benchmark
+=================================================
+Data root              : /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/data
+Graphs dir             : /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/graphs
+Customer size          : 50
+Instances              : 300
+Available CPUs         : 24
+Core counts            : [1, 2, 4, 8]
+Solve times            : [4, 7, 10]
+Instance types         : Clustered=100, Mixed=100, Random=100
+ALNS scaling mode      : unlimited iterations, time-limited
+=================================================
+
+-------------------------------------------------
+Experiment              : core_scaling
+Solver                  : ALNS
+core_count             : 1
+Timeout                 : 7.0 s
+Solver parallel jobs    : 1
+Solver options          : {'unlimited_iterations': True}
+Available CPUs          : 24
+Benchmark workers       : 24
+  Worker 1  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 2  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 3  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 4  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 5  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 6  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 7  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 8  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 9  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 10 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 11 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 12 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 13 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 14 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 15 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 16 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 17 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 18 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 19 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 20 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 21 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 22 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 23 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 24 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+-------------------------------------------------
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C101_21x.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C102_21x.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C103_21x.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C104_21x.txt (Clustered) ... [worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C105_21x.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C106_21x.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C107_21x.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C108_21x.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C109_21x.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C110_21x_n.txt (Clustered) ... [worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C111_21x_n.txt (Clustered) ... [worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C112_21x_n.txt (Clustered) ... [worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C113_21x_n.txt (Clustered) ... [worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C114_21x_n.txt (Clustered) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C115_21x_n.txt (Clustered) ... [worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C116_21x_n.txt (Clustered) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C117_21x_n.txt (Clustered) ... [worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C118_21x_n.txt (Clustered) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C119_21x_n.txt (Clustered) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C120_21x_n.txt (Clustered) ... [worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C121_21x_n.txt (Clustered) ... [worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C122_21x_n.txt (Clustered) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C123_21x_n.txt (Clustered) ... [worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C124_21x_n.txt (Clustered) ... 6.751s | dist=1171.9484398729055 | EVs=14
+6.751s | dist=1240.6999777117028 | EVs=14
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C126_21x_n.txt (Clustered) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C125_21x_n.txt (Clustered) ... 6.751s | dist=1183.1557625417847 | EVs=13
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C127_21x_n.txt (Clustered) ... 6.751s | dist=1128.7462700499348 | EVs=12
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C128_21x_n.txt (Clustered) ... 6.751s | dist=1241.959306913453 | EVs=14
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C129_21x_n.txt (Clustered) ... 6.751s | dist=1224.31273778011 | EVs=14
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C130_21x_n.txt (Clustered) ... 6.751s | dist=1251.2459168849568 | EVs=14
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C131_21x_n.txt (Clustered) ... 6.751s | dist=1243.2663922441875 | EVs=13
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C132_21x_n.txt (Clustered) ... 6.751s | dist=1193.4151176666821 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C135_21x_n.txt (Clustered) ... 6.751s | dist=1156.4546742613975 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C136_21x_n.txt (Clustered) ... 6.751s | dist=1152.5424522601097 | EVs=14
+6.751s | dist=1373.1890354893783 | EVs=14
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C134_21x_n.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C133_21x_n.txt (Clustered) ... 6.751s | dist=1439.8846883157087 | EVs=16
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C137_21x_n.txt (Clustered) ... 6.751s | dist=1314.3337920891656 | EVs=14
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C138_21x_n.txt (Clustered) ... 6.751s | dist=1300.4412452174145 | EVs=13
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C139_21x_n.txt (Clustered) ... 6.751s | dist=1223.9302656139246 | EVs=14
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C140_21x_n.txt (Clustered) ... 6.751s | dist=1299.2232655318362 | EVs=15
+6.751s | dist=1381.931161504494 | EVs=13
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C142_21x_n.txt (Clustered) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C141_21x_n.txt (Clustered) ... 6.751s | dist=1252.3697934278625 | EVs=15
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C143_21x_n.txt (Clustered) ... 6.751s | dist=1396.4633960886003 | EVs=16
+6.751s | dist=1324.9685651935295 | EVs=15
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C145_21x_n.txt (Clustered) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C144_21x_n.txt (Clustered) ... 6.751s | dist=1264.7065170707324 | EVs=14
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C146_21x_n.txt (Clustered) ... 6.751s | dist=1280.58071678535 | EVs=15
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C148_21x_n.txt (Clustered) ... 6.751s | dist=1318.5490790673357 | EVs=14
+[worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=7s options={'unlimited_iterations': True} | C147_21x_n.txt (Clustered) ... 

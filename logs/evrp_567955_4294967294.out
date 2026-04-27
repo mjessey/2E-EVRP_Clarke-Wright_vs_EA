@@ -1,0 +1,665 @@
+SLURM_JOB_ID: 567955
+CPUs per task: 24
+Node list: node004
+Working directory: /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA
+Python: /home/tntech.edu/mojessey42/.conda/envs/tdmpc2/bin/python
+Conda env: evrp_env
+pygame 2.6.1 (SDL 2.28.4, Python 3.10.19)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Choose mode:
+1: Solve one instance
+2: Benchmark algorithms
+3: Scaling benchmark for ALNS/Memetic cores/time
+> Enter benchmark data directory [default: /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/data]
+> 
+CPUs available according to system/scheduler: 24
+How many CPUs should be available to the scaling benchmark? [default: 24]
+> 
+=================================================
+Scaling benchmark
+=================================================
+Data root              : /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/data
+Graphs dir             : /work/projects/bs-mojessey42/mojessey42/2E-EVRP_Clarke-Wright_vs_EA/graphs
+Customer size          : 100
+Instances              : 300
+Available CPUs         : 24
+Core counts            : [1, 2, 4, 8]
+Solve times            : [5, 10, 15]
+Instance types         : Clustered=100, Mixed=100, Random=100
+ALNS scaling mode      : unlimited iterations, time-limited
+=================================================
+
+-------------------------------------------------
+Experiment              : core_scaling
+Solver                  : ALNS
+core_count             : 1
+Timeout                 : 10.0 s
+Solver parallel jobs    : 1
+Solver options          : {'unlimited_iterations': True}
+Available CPUs          : 24
+Benchmark workers       : 24
+  Worker 1  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 2  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 3  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 4  : 15    instances (Clustered: 5, Mixed: 5, Random: 5)
+  Worker 5  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 6  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 7  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 8  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 9  : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 10 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 11 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 12 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 13 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 14 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 15 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 16 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 17 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 18 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 19 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 20 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 21 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 22 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 23 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+  Worker 24 : 12    instances (Clustered: 4, Mixed: 4, Random: 4)
+-------------------------------------------------
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C101_21x.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C102_21x.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C103_21x.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C104_21x.txt (Clustered) ... [worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C105_21x.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C106_21x.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C107_21x.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C108_21x.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C109_21x.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C110_21x_n.txt (Clustered) ... [worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C111_21x_n.txt (Clustered) ... [worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C112_21x_n.txt (Clustered) ... [worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C113_21x_n.txt (Clustered) ... [worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C114_21x_n.txt (Clustered) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C115_21x_n.txt (Clustered) ... [worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C116_21x_n.txt (Clustered) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C117_21x_n.txt (Clustered) ... [worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C118_21x_n.txt (Clustered) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C119_21x_n.txt (Clustered) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C120_21x_n.txt (Clustered) ... [worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C121_21x_n.txt (Clustered) ... [worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C122_21x_n.txt (Clustered) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C123_21x_n.txt (Clustered) ... [worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C124_21x_n.txt (Clustered) ... 9.751s | dist=1265.838337732161 | EVs=14
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C125_21x_n.txt (Clustered) ... 9.751s | dist=1202.7754890263282 | EVs=13
+9.751s | dist=1232.8978433518532 | EVs=14
+9.751s | dist=1111.042881800988 | EVs=12
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C126_21x_n.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C127_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C128_21x_n.txt (Clustered) ... 9.751s | dist=1263.9744725932212 | EVs=14
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C129_21x_n.txt (Clustered) ... 9.751s | dist=1189.640702519707 | EVs=14
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C130_21x_n.txt (Clustered) ... 9.751s | dist=1191.957622919246 | EVs=14
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C131_21x_n.txt (Clustered) ... 9.751s | dist=1228.4539561409717 | EVs=13
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C132_21x_n.txt (Clustered) ... 9.751s | dist=1185.1180335965391 | EVs=12
+9.751s | dist=1292.8206775889253 | EVs=15
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C133_21x_n.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C134_21x_n.txt (Clustered) ... 9.751s | dist=1247.1307491350808 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C135_21x_n.txt (Clustered) ... 9.751s | dist=1469.8399729190735 | EVs=16
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C137_21x_n.txt (Clustered) ... 9.751s | dist=1223.8424857402997 | EVs=15
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C136_21x_n.txt (Clustered) ... 9.751s | dist=1297.71455016538 | EVs=14
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C138_21x_n.txt (Clustered) ... 9.751s | dist=1255.596129875501 | EVs=14
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C140_21x_n.txt (Clustered) ... 9.751s | dist=1258.0216857431756 | EVs=15
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C143_21x_n.txt (Clustered) ... 9.751s | dist=1182.6933895744307 | EVs=13
+9.751s | dist=1320.7683595307299 | EVs=16
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C139_21x_n.txt (Clustered) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C144_21x_n.txt (Clustered) ... 9.751s | dist=1265.170058644209 | EVs=14
+9.751s | dist=1277.1921445090834 | EVs=15
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C146_21x_n.txt (Clustered) ... 9.751s | dist=1266.8976408463286 | EVs=15
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C141_21x_n.txt (Clustered) ... 9.751s | dist=1272.8153768245259 | EVs=15
+9.751s | dist=1358.3770520793985 | EVs=16
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C145_21x_n.txt (Clustered) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C147_21x_n.txt (Clustered) ... [worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C142_21x_n.txt (Clustered) ... 9.751s | dist=1232.4496321815593 | EVs=16
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C148_21x_n.txt (Clustered) ... 9.751s | dist=1252.8777271318584 | EVs=15
+9.751s | dist=1252.2832448658014 | EVs=14
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C150_21x_n.txt (Clustered) ... 9.751s | dist=1199.812434961668 | EVs=14
+9.751s | dist=1311.7499729999533 | EVs=15
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C201_21x.txt (Clustered) ... [worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C203_21x.txt (Clustered) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C149_21x_n.txt (Clustered) ... 9.751s | dist=1330.5022015701193 | EVs=14
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C202_21x.txt (Clustered) ... 9.751s | dist=1281.1605135540858 | EVs=15
+9.751s | dist=1290.183606191141 | EVs=15
+9.751s | dist=1274.4664917043356 | EVs=15
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C205_21x.txt (Clustered) ... 9.751s | dist=1214.7858128864793 | EVs=14
+9.751s | dist=1192.4562885725209 | EVs=15
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C206_21x.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C208_21x.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C207_21x.txt (Clustered) ... 9.751s | dist=1303.9358316173164 | EVs=15
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C204_21x.txt (Clustered) ... [worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C209_21x_n.txt (Clustered) ... 9.751s | dist=1435.9588586021664 | EVs=15
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C212_21x_n.txt (Clustered) ... 9.751s | dist=1211.4642807982725 | EVs=15
+9.751s | dist=1211.3575047045626 | EVs=14
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C211_21x_n.txt (Clustered) ... [worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C214_21x_n.txt (Clustered) ... 9.751s | dist=1307.197639433268 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C210_21x_n.txt (Clustered) ... 9.751s | dist=1184.4152948130798 | EVs=14
+9.751s | dist=1332.1697009424634 | EVs=14
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C218_21x_n.txt (Clustered) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C217_21x_n.txt (Clustered) ... 9.751s | dist=1310.9057649154954 | EVs=14
+9.751s | dist=1225.0766588714444 | EVs=15
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C215_21x_n.txt (Clustered) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C213_21x_n.txt (Clustered) ... 9.751s | dist=1150.1774090597826 | EVs=14
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C222_21x_n.txt (Clustered) ... 9.751s | dist=1299.0514788420319 | EVs=16
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C220_21x_n.txt (Clustered) ... 9.751s | dist=1439.7869239078232 | EVs=15
+9.751s | dist=1243.939280345056 | EVs=15
+9.751s | dist=1378.8236944195228 | EVs=15
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C216_21x_n.txt (Clustered) ... [worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C219_21x_n.txt (Clustered) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C221_21x_n.txt (Clustered) ... 9.751s | dist=1049.4118805499627 | EVs=7
+9.751s | dist=1198.5735236299079 | EVs=14
+9.751s | dist=999.770776185045 | EVs=7
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C227_21x_n.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C225_21x_n.txt (Clustered) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C223_21x_n.txt (Clustered) ... 9.751s | dist=1016.2120958005744 | EVs=7
+9.751s | dist=1279.8086903747806 | EVs=14
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C226_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C224_21x_n.txt (Clustered) ... 9.751s | dist=1021.1457175854393 | EVs=8
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C231_21x_n.txt (Clustered) ... 9.751s | dist=1037.3733162973963 | EVs=8
+9.751s | dist=1052.4845723672952 | EVs=8
+9.751s | dist=1081.2062534195777 | EVs=7
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C229_21x_n.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C230_21x_n.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C232_21x_n.txt (Clustered) ... 9.751s | dist=1135.501846433123 | EVs=8
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C233_21x_n.txt (Clustered) ... 9.751s | dist=1138.7749113234775 | EVs=9
+9.751s | dist=1101.0344660237383 | EVs=9
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C238_21x_n.txt (Clustered) ... [worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C236_21x_n.txt (Clustered) ... 9.751s | dist=1114.36854531381 | EVs=9
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C235_21x_n.txt (Clustered) ... 9.751s | dist=1197.5860064956992 | EVs=9
+9.751s | dist=998.7954994079772 | EVs=7
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C234_21x_n.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C228_21x_n.txt (Clustered) ... 9.751s | dist=1206.6408787018547 | EVs=9
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C242_21x_n.txt (Clustered) ... 9.751s | dist=1151.7582464099262 | EVs=9
+9.751s | dist=1156.604774504923 | EVs=9
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C239_21x_n.txt (Clustered) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C237_21x_n.txt (Clustered) ... 9.751s | dist=1129.570682771949 | EVs=9
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C244_21x_n.txt (Clustered) ... 9.751s | dist=1120.4999718221522 | EVs=9
+9.751s | dist=1190.522021349531 | EVs=9
+9.751s | dist=1104.9905739010617 | EVs=9
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C240_21x_n.txt (Clustered) ... [worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C246_21x_n.txt (Clustered) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C241_21x_n.txt (Clustered) ... 9.751s | dist=1216.9117244125407 | EVs=9
+[worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C245_21x_n.txt (Clustered) ... 9.751s | dist=1069.61318193708 | EVs=9
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C243_21x_n.txt (Clustered) ... 9.751s | dist=1133.8744119090961 | EVs=8
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC105_21x.txt (Mixed) ... 9.751s | dist=1140.7750495361274 | EVs=9
+9.751s | dist=1131.4058428080248 | EVs=8
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C247_21x_n.txt (Clustered) ... 9.751s | dist=1199.234793530464 | EVs=9
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C249_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C248_21x_n.txt (Clustered) ... 9.751s | dist=1105.4254999114246 | EVs=8
+9.751s | dist=1310.7092583125159 | EVs=10
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | C250_21x_n.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC110_21x_n.txt (Mixed) ... 9.751s | dist=1163.5597147482813 | EVs=9
+9.751s | dist=1162.6130493705577 | EVs=9
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC111_21x_n.txt (Mixed) ... 9.751s | dist=1176.3951839008853 | EVs=9
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC108_21x.txt (Mixed) ... [worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC107_21x.txt (Mixed) ... 9.751s | dist=1100.2012145803674 | EVs=8
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC112_21x_n.txt (Mixed) ... 9.751s | dist=1106.6638266133048 | EVs=9
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC117_21x_n.txt (Mixed) ... 9.751s | dist=1156.2354237458053 | EVs=9
+9.751s | dist=1070.537257583147 | EVs=9
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC114_21x_n.txt (Mixed) ... [worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC115_21x_n.txt (Mixed) ... 9.751s | dist=1159.7331292024014 | EVs=9
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC121_21x_n.txt (Mixed) ... 9.751s | dist=1110.3413013811683 | EVs=9
+9.751s | dist=1021.0681744574821 | EVs=8
+9.751s | dist=1088.3031381654948 | EVs=9
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC113_21x_n.txt (Mixed) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC106_21x.txt (Mixed) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC116_21x_n.txt (Mixed) ... 9.751s | dist=1083.241630770884 | EVs=9
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC118_21x_n.txt (Mixed) ... 9.751s | dist=1143.3695218610171 | EVs=9
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC123_21x_n.txt (Mixed) ... 9.751s | dist=1120.6937113513936 | EVs=9
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC119_21x_n.txt (Mixed) ... 9.751s | dist=1048.2496236080242 | EVs=9
+9.751s | dist=1120.4511235173075 | EVs=9
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC120_21x_n.txt (Mixed) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC124_21x_n.txt (Mixed) ... 9.751s | dist=1129.245283604477 | EVs=9
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC125_21x_n.txt (Mixed) ... 9.751s | dist=1215.227750517979 | EVs=10
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC122_21x_n.txt (Mixed) ... 9.751s | dist=1388.2123114323558 | EVs=17
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC130_21x_n.txt (Mixed) ... 9.751s | dist=1121.1813513078228 | EVs=9
+9.751s | dist=1124.6968517234939 | EVs=9
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC102_21x.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC103_21x.txt (Mixed) ... 9.751s | dist=1075.270996674624 | EVs=8
+9.751s | dist=1139.3581622565262 | EVs=8
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC101_21x.txt (Mixed) ... 9.751s | dist=1256.7205791116826 | EVs=15
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC104_21x.txt (Mixed) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC135_21x_n.txt (Mixed) ... 9.751s | dist=1387.84493989803 | EVs=16
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC134_21x_n.txt (Mixed) ... 9.751s | dist=1258.7775393844993 | EVs=14
+9.751s | dist=1279.305148964891 | EVs=14
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC136_21x_n.txt (Mixed) ... [worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC132_21x_n.txt (Mixed) ... 9.751s | dist=1206.6542455615693 | EVs=14
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC133_21x_n.txt (Mixed) ... 9.751s | dist=1460.6845268308023 | EVs=15
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC141_21x_n.txt (Mixed) ... 9.751s | dist=1413.7507464462353 | EVs=15
+9.751s | dist=1380.3730607463435 | EVs=16
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC138_21x_n.txt (Mixed) ... [worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC139_21x_n.txt (Mixed) ... 9.751s | dist=1313.958962039272 | EVs=16
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC131_21x_n.txt (Mixed) ... 9.751s | dist=1311.6456703763574 | EVs=15
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC145_21x_n.txt (Mixed) ... 9.751s | dist=1331.1537480102295 | EVs=15
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC140_21x_n.txt (Mixed) ... 9.751s | dist=1341.3097296232877 | EVs=15
+9.751s | dist=1231.6912011827421 | EVs=15
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC137_21x_n.txt (Mixed) ... 9.751s | dist=1308.2649923742804 | EVs=15
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC143_21x_n.txt (Mixed) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC142_21x_n.txt (Mixed) ... 9.751s | dist=1323.6760937071786 | EVs=17
+9.751s | dist=1440.9673744452043 | EVs=16
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC144_21x_n.txt (Mixed) ... [worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC147_21x_n.txt (Mixed) ... 9.751s | dist=1478.7250241604831 | EVs=16
+9.751s | dist=1426.0542890624479 | EVs=17
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC149_21x_n.txt (Mixed) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC148_21x_n.txt (Mixed) ... 9.751s | dist=1185.0498655975425 | EVs=14
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC146_21x_n.txt (Mixed) ... 9.751s | dist=1530.5556865061985 | EVs=16
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC203_21x.txt (Mixed) ... 9.751s | dist=1285.022390545846 | EVs=15
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC128_21x_n.txt (Mixed) ... 9.751s | dist=1199.5011542285108 | EVs=13
+9.751s | dist=1419.655803464639 | EVs=17
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC129_21x_n.txt (Mixed) ... 9.751s | dist=1320.080824130451 | EVs=15
+9.751s | dist=1485.6799565039978 | EVs=18
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC127_21x_n.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC126_21x_n.txt (Mixed) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC208_21x.txt (Mixed) ... 9.751s | dist=1326.4504951911974 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC209_21x_n.txt (Mixed) ... 9.751s | dist=1258.693364710598 | EVs=15
+9.751s | dist=1340.052138962593 | EVs=15
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC207_21x.txt (Mixed) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC206_21x.txt (Mixed) ... 9.751s | dist=1469.3585348261238 | EVs=16
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC214_21x_n.txt (Mixed) ... 9.751s | dist=1469.2284243508425 | EVs=16
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC205_21x.txt (Mixed) ... 9.751s | dist=1255.443991985331 | EVs=15
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC212_21x_n.txt (Mixed) ... 9.751s | dist=1357.879015098104 | EVs=16
+9.751s | dist=1336.4694947162952 | EVs=16
+9.751s | dist=1423.8593224724898 | EVs=16
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC204_21x.txt (Mixed) ... [worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC211_21x_n.txt (Mixed) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC218_21x_n.txt (Mixed) ... 9.751s | dist=1318.3477984727401 | EVs=15
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC216_21x_n.txt (Mixed) ... 9.751s | dist=1443.3870949669406 | EVs=17
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC210_21x_n.txt (Mixed) ... 9.751s | dist=1445.665431403561 | EVs=15
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC217_21x_n.txt (Mixed) ... 9.751s | dist=1431.8507237011931 | EVs=16
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC213_21x_n.txt (Mixed) ... 9.751s | dist=1443.3680983557601 | EVs=17
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC222_21x_n.txt (Mixed) ... 9.751s | dist=1321.308826501569 | EVs=15
+9.751s | dist=1193.9181197491923 | EVs=14
+9.751s | dist=1263.5991902767394 | EVs=14
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC220_21x_n.txt (Mixed) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC221_21x_n.txt (Mixed) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC215_21x_n.txt (Mixed) ... 9.751s | dist=1402.9149737857686 | EVs=16
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC219_21x_n.txt (Mixed) ... 9.751s | dist=1275.2693879053857 | EVs=6
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC227_21x_n.txt (Mixed) ... 9.751s | dist=1528.587878303805 | EVs=16
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC201_21x.txt (Mixed) ... 9.751s | dist=1425.5502105549156 | EVs=16
+9.751s | dist=1498.3249447151081 | EVs=16
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC151_21x_n.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC150_21x_n.txt (Mixed) ... 9.751s | dist=1492.7240206397664 | EVs=16
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC202_21x.txt (Mixed) ... 9.751s | dist=1268.545299892712 | EVs=6
+9.751s | dist=1269.9629067191825 | EVs=6
+9.751s | dist=1165.4743608328533 | EVs=6
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC231_21x_n.txt (Mixed) ... 9.751s | dist=1437.2699538745135 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC233_21x_n.txt (Mixed) ... [worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC232_21x_n.txt (Mixed) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC230_21x_n.txt (Mixed) ... 9.751s | dist=1279.252114209316 | EVs=6
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC238_21x_n.txt (Mixed) ... 9.751s | dist=1371.9208462809431 | EVs=7
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC229_21x_n.txt (Mixed) ... 9.751s | dist=1400.9968461162068 | EVs=6
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC236_21x_n.txt (Mixed) ... 9.751s | dist=1177.825224820344 | EVs=6
+9.751s | dist=1315.9368877663744 | EVs=6
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC240_21x_n.txt (Mixed) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC228_21x_n.txt (Mixed) ... 9.751s | dist=1411.283430932751 | EVs=7
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC234_21x_n.txt (Mixed) ... 9.751s | dist=1273.5261927643621 | EVs=6
+9.751s | dist=1446.0560566125907 | EVs=7
+9.751s | dist=1461.802147066861 | EVs=7
+9.751s | dist=1247.1796489917715 | EVs=6
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC235_21x_n.txt (Mixed) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC241_21x_n.txt (Mixed) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC242_21x_n.txt (Mixed) ... [worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC237_21x_n.txt (Mixed) ... 9.751s | dist=1370.2711642349025 | EVs=6
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC246_21x_n.txt (Mixed) ... 9.751s | dist=1272.3899547885876 | EVs=6
+9.751s | dist=1235.6836123999565 | EVs=6
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC244_21x_n.txt (Mixed) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC245_21x_n.txt (Mixed) ... 9.751s | dist=1288.720781268085 | EVs=7
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC243_21x_n.txt (Mixed) ... 9.751s | dist=1373.5092033439234 | EVs=6
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC239_21x_n.txt (Mixed) ... 9.751s | dist=1304.506734340442 | EVs=6
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R105_21x.txt (Random) ... 9.751s | dist=1496.518256355328 | EVs=7
+9.751s | dist=1357.3077243439564 | EVs=17
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC225_21x_n.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC223_21x_n.txt (Mixed) ... 9.751s | dist=1568.5737243400617 | EVs=5
+9.751s | dist=1330.2308875819315 | EVs=15
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC226_21x_n.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC224_21x_n.txt (Mixed) ... 9.751s | dist=1293.0231596441367 | EVs=6
+9.751s | dist=1205.6662235065123 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R111_21x.txt (Random) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R109_21x.txt (Random) ... 9.751s | dist=1405.7216742224102 | EVs=6
+9.751s | dist=1269.0960824665644 | EVs=6
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R108_21x.txt (Random) ... [worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R116_21x_n.txt (Random) ... 9.751s | dist=1386.8856848169487 | EVs=6
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R107_21x.txt (Random) ... 9.751s | dist=1406.254401572942 | EVs=7
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R114_21x_n.txt (Random) ... 9.751s | dist=1267.2204575812575 | EVs=6
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R110_21x.txt (Random) ... 9.751s | dist=1241.6278748366544 | EVs=6
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R106_21x.txt (Random) ... 9.751s | dist=1338.425611354377 | EVs=6
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R118_21x_n.txt (Random) ... 9.751s | dist=1366.1450588899 | EVs=7
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R112_21x.txt (Random) ... 9.751s | dist=1321.9386473246543 | EVs=7
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R113_21x_n.txt (Random) ... 9.751s | dist=1193.4671618001255 | EVs=6
+9.751s | dist=1254.515263398631 | EVs=6
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R120_21x_n.txt (Random) ... [worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R119_21x_n.txt (Random) ... 9.751s | dist=1324.7988497457343 | EVs=6
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R115_21x_n.txt (Random) ... 9.751s | dist=1298.848827451355 | EVs=6
+9.751s | dist=1368.0572138307164 | EVs=6
+[worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R123_21x_n.txt (Random) ... 9.751s | dist=1282.4263806924878 | EVs=6
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R124_21x_n.txt (Random) ... [worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R122_21x_n.txt (Random) ... 9.751s | dist=1336.8780085072458 | EVs=6
+9.751s | dist=1329.1491487435233 | EVs=7
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R121_21x_n.txt (Random) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R117_21x_n.txt (Random) ... 9.751s | dist=1583.4024957264364 | EVs=21
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R129_21x_n.txt (Random) ... 9.751s | dist=1259.6974300755166 | EVs=6
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC249_21x_n.txt (Mixed) ... 9.751s | dist=1380.0811685837207 | EVs=6
+9.751s | dist=1245.9259607336935 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC247_21x_n.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC248_21x_n.txt (Mixed) ... 9.751s | dist=1310.5700477280402 | EVs=7
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | RC250_21x_n.txt (Mixed) ... 9.751s | dist=1354.8741263933878 | EVs=15
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R132_21x_n.txt (Random) ... 9.751s | dist=1527.7257924162247 | EVs=18
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R140_21x_n.txt (Random) ... 9.751s | dist=1448.1694443732906 | EVs=16
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R131_21x_n.txt (Random) ... 9.751s | dist=1372.750765909324 | EVs=17
+9.751s | dist=1453.7332224574773 | EVs=18
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R133_21x_n.txt (Random) ... [worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R135_21x_n.txt (Random) ... 9.751s | dist=1276.334224175201 | EVs=16
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R138_21x_n.txt (Random) ... 9.751s | dist=1366.499483119426 | EVs=15
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R134_21x_n.txt (Random) ... 9.751s | dist=1487.5187654198494 | EVs=19
+9.751s | dist=1315.5319462426176 | EVs=15
+9.751s | dist=1360.9478784962362 | EVs=16
+[worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R130_21x_n.txt (Random) ... [worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R136_21x_n.txt (Random) ... [worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R142_21x_n.txt (Random) ... 9.751s | dist=1262.0796624971572 | EVs=17
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R137_21x_n.txt (Random) ... 9.751s | dist=1258.5875119232032 | EVs=18
+9.751s | dist=1337.0994645442524 | EVs=15
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R143_21x_n.txt (Random) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R144_21x_n.txt (Random) ... 9.751s | dist=1195.0323717348508 | EVs=16
+9.751s | dist=1443.628160709812 | EVs=16
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R139_21x_n.txt (Random) ... [worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R148_21x_n.txt (Random) ... 9.751s | dist=1399.7963478168685 | EVs=17
+[worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R147_21x_n.txt (Random) ... 9.751s | dist=1231.2202958405678 | EVs=16
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R146_21x_n.txt (Random) ... 9.751s | dist=1287.056689478224 | EVs=17
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R145_21x_n.txt (Random) ... 9.751s | dist=1446.7386215216793 | EVs=18
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R141_21x_n.txt (Random) ... 9.751s | dist=1272.4362155478932 | EVs=17
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R203_21x.txt (Random) ... 9.751s | dist=1300.0582695451808 | EVs=6
+9.751s | dist=1225.0954288693256 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R101_21x.txt (Random) ... [worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R103_21x.txt (Random) ... 9.751s | dist=1273.5396663892207 | EVs=16
+9.751s | dist=1260.512837212817 | EVs=7
+[worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R206_21x.txt (Random) ... [worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R102_21x.txt (Random) ... 9.751s | dist=1428.953510813753 | EVs=17
+9.751s | dist=1291.640407939851 | EVs=18
+9.751s | dist=1349.5471452223974 | EVs=6
+[worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R207_21x.txt (Random) ... 9.751s | dist=1439.5231632501566 | EVs=16
+[worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R205_21x.txt (Random) ... [worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R104_21x.txt (Random) ... [worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R214_21x_n.txt (Random) ... 9.751s | dist=1265.8444024471369 | EVs=17
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R212_21x_n.txt (Random) ... 9.751s | dist=1465.2704124669829 | EVs=17
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R209_21x.txt (Random) ... 9.751s | dist=1356.282373564772 | EVs=17
+9.751s | dist=1262.3086672253553 | EVs=17
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R208_21x.txt (Random) ... [worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R216_21x_n.txt (Random) ... 9.751s | dist=1472.6370364904876 | EVs=18
+9.751s | dist=1493.9227403733637 | EVs=18
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R211_21x.txt (Random) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R204_21x.txt (Random) ... 9.751s | dist=1372.1548430002088 | EVs=16
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R217_21x_n.txt (Random) ... 9.751s | dist=1236.8382382562534 | EVs=16
+9.751s | dist=1456.168812576633 | EVs=17
+[worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R218_21x_n.txt (Random) ... [worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R210_21x.txt (Random) ... 9.751s | dist=1442.0749265002023 | EVs=18
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R222_21x_n.txt (Random) ... 9.751s | dist=1438.8897971271865 | EVs=17
+[worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R221_21x_n.txt (Random) ... 9.751s | dist=1202.0698060747523 | EVs=17
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R213_21x_n.txt (Random) ... 9.751s | dist=1404.6802051368143 | EVs=17
+9.751s | dist=1371.105028806591 | EVs=17
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R220_21x_n.txt (Random) ... [worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R215_21x_n.txt (Random) ... 9.751s | dist=1408.6893996866118 | EVs=17
+[worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R219_21x_n.txt (Random) ... 9.751s | dist=1231.989177951291 | EVs=6
+[worker 5] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R227_21x_n.txt (Random) ... 9.751s | dist=1698.0113687504338 | EVs=25
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R125_21x_n.txt (Random) ... 9.751s | dist=1606.1457113313913 | EVs=21
+9.751s | dist=1268.3862513419115 | EVs=6
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R126_21x_n.txt (Random) ... [worker 8] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R230_21x_n.txt (Random) ... 9.751s | dist=1467.8514099798647 | EVs=18
+9.751s | dist=1150.6110493410104 | EVs=4
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R127_21x_n.txt (Random) ... [worker 9] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R231_21x_n.txt (Random) ... 9.751s | dist=1312.1819661386753 | EVs=5
+9.751s | dist=1321.3806792348485 | EVs=6
+[worker 16] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R238_21x_n.txt (Random) ... [worker 7] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R229_21x_n.txt (Random) ... 9.751s | dist=1337.410619862412 | EVs=14
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R128_21x_n.txt (Random) ... 9.751s | dist=1338.3621312670991 | EVs=5
+[worker 14] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R236_21x_n.txt (Random) ... 9.751s | dist=1223.438049902607 | EVs=5
+[worker 10] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R232_21x_n.txt (Random) ... 9.751s | dist=1342.8261706800254 | EVs=5
+[worker 18] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R240_21x_n.txt (Random) ... 9.751s | dist=1225.2850808960377 | EVs=5
+9.751s | dist=1246.0090548717083 | EVs=6
+[worker 19] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R241_21x_n.txt (Random) ... 9.751s | dist=1109.5998838019925 | EVs=4
+[worker 11] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R233_21x_n.txt (Random) ... [worker 6] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R228_21x_n.txt (Random) ... 9.752s | dist=1272.2752264108003 | EVs=4
+[worker 13] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R235_21x_n.txt (Random) ... 9.751s | dist=1103.7419766471305 | EVs=5
+9.751s | dist=1167.1533225864862 | EVs=5
+[worker 12] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R234_21x_n.txt (Random) ... [worker 20] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R242_21x_n.txt (Random) ... 9.751s | dist=1262.7619540421783 | EVs=5
+[worker 24] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R246_21x_n.txt (Random) ... 9.751s | dist=1368.9090076885486 | EVs=5
+9.751s | dist=1336.7930291821176 | EVs=5
+[worker 15] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R237_21x_n.txt (Random) ... [worker 23] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R245_21x_n.txt (Random) ... 9.751s | dist=1480.8981112473687 | EVs=5
+9.751s | dist=1264.3732855868943 | EVs=5
+[worker 22] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R244_21x_n.txt (Random) ... [worker 21] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R243_21x_n.txt (Random) ... 9.751s | dist=1252.9167621452607 | EVs=4
+[worker 17] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R239_21x_n.txt (Random) ... 9.751s | dist=1341.957861451273 | EVs=5
+9.751s | dist=1179.606858371236 | EVs=16
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R149_21x_n.txt (Random) ... 9.751s | dist=1399.2373828449745 | EVs=5
+9.751s | dist=1456.561042278442 | EVs=18
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R150_21x_n.txt (Random) ... 9.751s | dist=1406.3048478066116 | EVs=17
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R201_21x.txt (Random) ... 9.751s | dist=1357.3501804819189 | EVs=5
+9.751s | dist=1275.5358526287966 | EVs=4
+9.751s | dist=1367.0676422068225 | EVs=5
+9.751s | dist=1407.419733990555 | EVs=18
+9.751s | dist=1354.4010633807104 | EVs=5
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R202_21x.txt (Random) ... 9.751s | dist=1258.7474762734323 | EVs=4
+9.751s | dist=1299.3115650392224 | EVs=4
+9.751s | dist=1238.4221178226571 | EVs=5
+9.751s | dist=1462.3485316723977 | EVs=5
+9.751s | dist=1362.885314256404 | EVs=5
+9.751s | dist=1412.2456543074702 | EVs=5
+9.751s | dist=1361.7301437568517 | EVs=5
+9.751s | dist=1342.610579515543 | EVs=5
+9.751s | dist=1292.0264356022005 | EVs=4
+9.751s | dist=1369.5201842480803 | EVs=5
+9.751s | dist=1356.6162258734748 | EVs=5
+9.751s | dist=1298.37578591268 | EVs=4
+9.751s | dist=1403.1159678875329 | EVs=5
+9.751s | dist=1388.8165007376701 | EVs=5
+9.751s | dist=1309.2870930287165 | EVs=17
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R223_21x_n.txt (Random) ... 9.751s | dist=1402.7222312661152 | EVs=17
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R224_21x_n.txt (Random) ... 9.751s | dist=1471.8620241588333 | EVs=7
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R225_21x_n.txt (Random) ... 9.751s | dist=1424.9631120054867 | EVs=5
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R226_21x_n.txt (Random) ... 9.751s | dist=1365.851712208888 | EVs=5
+[worker 1] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R247_21x_n.txt (Random) ... 9.751s | dist=1310.7688725579524 | EVs=5
+[worker 2] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R248_21x_n.txt (Random) ... 9.751s | dist=1200.008669015679 | EVs=5
+[worker 3] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R249_21x_n.txt (Random) ... 9.751s | dist=1228.568890111779 | EVs=5
+[worker 4] core_scaling | ALNS | core_count=1 | jobs=1 | timeout=10s options={'unlimited_iterations': True} | R250_21x_n.txt (Random) ... 9.751s | dist=1356.1291761145571 | EVs=5
+9.751s | dist=1339.3785889332992 | EVs=5
+9.751s | dist=1323.5461291147544 | EVs=5
+9.751s | dist=1399.3969358219656 | EVs=5
+
+-------------------------------------------------
+Experiment              : core_scaling
+Solver                  : ALNS
+core_count             : 2
+Timeout                 : 10.0 s
+Solver parallel jobs    : 2
+Solver options          : {'unlimited_iterations': True}
+Available CPUs          : 24
+Benchmark workers       : 12
+  Worker 1  : 27    instances (Clustered: 9, Mixed: 9, Random: 9)
+  Worker 2  : 27    instances (Clustered: 9, Mixed: 9, Random: 9)
+  Worker 3  : 27    instances (Clustered: 9, Mixed: 9, Random: 9)
+  Worker 4  : 27    instances (Clustered: 9, Mixed: 9, Random: 9)
+  Worker 5  : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 6  : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 7  : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 8  : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 9  : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 10 : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 11 : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+  Worker 12 : 24    instances (Clustered: 8, Mixed: 8, Random: 8)
+-------------------------------------------------
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C101_21x.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C102_21x.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C103_21x.txt (Clustered) ... [worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C105_21x.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C104_21x.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C106_21x.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C107_21x.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C108_21x.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C109_21x.txt (Clustered) ... [worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C110_21x_n.txt (Clustered) ... [worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C111_21x_n.txt (Clustered) ... [worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C112_21x_n.txt (Clustered) ... 9.767s | dist=1193.1819538609832 | EVs=14
+9.768s | dist=1244.4644546725117 | EVs=14
+9.768s | dist=1198.0805131163481 | EVs=15
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C113_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C114_21x_n.txt (Clustered) ... 9.770s | dist=1158.8075681458242 | EVs=13
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C117_21x_n.txt (Clustered) ... 9.768s | dist=1120.3096627547202 | EVs=12
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C115_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C116_21x_n.txt (Clustered) ... 9.769s | dist=1250.308790128585 | EVs=14
+9.768s | dist=1184.6274923058124 | EVs=15
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C118_21x_n.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C119_21x_n.txt (Clustered) ... 9.770s | dist=1199.0368384371848 | EVs=14
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C120_21x_n.txt (Clustered) ... 9.770s | dist=1249.3522020134665 | EVs=15
+9.770s | dist=1192.4467233759692 | EVs=12
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C122_21x_n.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C121_21x_n.txt (Clustered) ... 9.775s | dist=1180.8516627407819 | EVs=16
+9.778s | dist=1156.3474802590208 | EVs=15
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C124_21x_n.txt (Clustered) ... [worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C123_21x_n.txt (Clustered) ... 9.763s | dist=1318.9836938840797 | EVs=17
+9.763s | dist=1305.092218017905 | EVs=14
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C125_21x_n.txt (Clustered) ... 9.767s | dist=1256.7280674362803 | EVs=14
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C129_21x_n.txt (Clustered) ... 9.767s | dist=1184.8449461463074 | EVs=13
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C126_21x_n.txt (Clustered) ... 9.765s | dist=1211.4976186717415 | EVs=14
+9.764s | dist=1241.8336714176735 | EVs=15
+9.764s | dist=1264.633885582912 | EVs=15
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C127_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C128_21x_n.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C131_21x_n.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C130_21x_n.txt (Clustered) ... 9.762s | dist=1248.4513540595046 | EVs=17
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C132_21x_n.txt (Clustered) ... 9.764s | dist=1360.9534547336145 | EVs=16
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C133_21x_n.txt (Clustered) ... 9.766s | dist=1233.27328660183 | EVs=14
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C134_21x_n.txt (Clustered) ... 9.765s | dist=1333.6915038331758 | EVs=14
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C135_21x_n.txt (Clustered) ... 9.778s | dist=1249.596999481075 | EVs=15
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C136_21x_n.txt (Clustered) ... 9.763s | dist=1191.8057215434785 | EVs=15
+9.765s | dist=1207.07926330317 | EVs=15
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C141_21x_n.txt (Clustered) ... 9.764s | dist=1277.9602178438597 | EVs=15
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C137_21x_n.txt (Clustered) ... 9.764s | dist=1215.599588736877 | EVs=15
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C138_21x_n.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C139_21x_n.txt (Clustered) ... 9.765s | dist=1324.5896978275734 | EVs=15
+9.765s | dist=1259.6945858312702 | EVs=15
+9.765s | dist=1231.6254893763319 | EVs=14
+9.763s | dist=1305.3588589928258 | EVs=15
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C143_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C140_21x_n.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C142_21x_n.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C144_21x_n.txt (Clustered) ... 9.762s | dist=1258.9697155025217 | EVs=15
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C145_21x_n.txt (Clustered) ... 9.765s | dist=1256.6168775052913 | EVs=15
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C146_21x_n.txt (Clustered) ... 9.763s | dist=1229.8378151291051 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C147_21x_n.txt (Clustered) ... 9.765s | dist=1308.0493363253374 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C148_21x_n.txt (Clustered) ... 9.761s | dist=1238.4346157516204 | EVs=14
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C203_21x.txt (Clustered) ... 9.764s | dist=1266.6730725756495 | EVs=14
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C149_21x_n.txt (Clustered) ... 9.764s | dist=1211.0008314491888 | EVs=16
+9.764s | dist=1360.8458937581759 | EVs=15
+9.764s | dist=1321.9199324880651 | EVs=14
+9.763s | dist=1148.927786530986 | EVs=13
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C150_21x_n.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C201_21x.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C205_21x.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C202_21x.txt (Clustered) ... 9.766s | dist=1219.0520912852248 | EVs=14
+9.765s | dist=1246.943646397983 | EVs=16
+9.762s | dist=1287.4903781160097 | EVs=15
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C206_21x.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C204_21x.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C207_21x.txt (Clustered) ... 9.763s | dist=1339.6283599347425 | EVs=16
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C208_21x.txt (Clustered) ... 9.770s | dist=1304.8369976007011 | EVs=14
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C209_21x_n.txt (Clustered) ... 9.762s | dist=1196.0937188860712 | EVs=14
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C210_21x_n.txt (Clustered) ... 9.764s | dist=1017.3643298105659 | EVs=7
+9.761s | dist=1211.9353095637036 | EVs=14
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C215_21x_n.txt (Clustered) ... [worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C211_21x_n.txt (Clustered) ... 9.763s | dist=1009.3985297822938 | EVs=8
+9.763s | dist=1229.218797714807 | EVs=15
+9.765s | dist=1034.817444029144 | EVs=8
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C213_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C212_21x_n.txt (Clustered) ... 9.765s | dist=1042.6483696651696 | EVs=7
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C214_21x_n.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C217_21x_n.txt (Clustered) ... 9.765s | dist=1019.1611346820987 | EVs=8
+9.765s | dist=997.1677177048471 | EVs=8
+9.766s | dist=1011.3989162676792 | EVs=8
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C216_21x_n.txt (Clustered) ... [worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C218_21x_n.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C219_21x_n.txt (Clustered) ... 9.765s | dist=1088.929368118819 | EVs=9
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C221_21x_n.txt (Clustered) ... 9.771s | dist=1052.3196172235444 | EVs=8
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C220_21x_n.txt (Clustered) ... 9.763s | dist=1156.6654521856185 | EVs=9
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C222_21x_n.txt (Clustered) ... 9.763s | dist=1140.9242701530356 | EVs=9
+9.763s | dist=1089.1867938788364 | EVs=9
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C227_21x_n.txt (Clustered) ... [worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C223_21x_n.txt (Clustered) ... 9.766s | dist=1103.75650614854 | EVs=9
+9.764s | dist=1148.8281924963871 | EVs=9
+9.763s | dist=1100.482315511385 | EVs=9
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C225_21x_n.txt (Clustered) ... 9.766s | dist=1110.8814014210873 | EVs=9
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C226_21x_n.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C229_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C224_21x_n.txt (Clustered) ... 9.762s | dist=1131.5769388869492 | EVs=8
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C231_21x_n.txt (Clustered) ... 9.764s | dist=1165.1992855091246 | EVs=9
+9.763s | dist=1159.5373802208203 | EVs=9
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C230_21x_n.txt (Clustered) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C228_21x_n.txt (Clustered) ... 9.764s | dist=1138.6886379396515 | EVs=9
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C233_21x_n.txt (Clustered) ... 9.762s | dist=1118.1843394210741 | EVs=9
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C232_21x_n.txt (Clustered) ... 9.775s | dist=1154.8599009783254 | EVs=8
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C234_21x_n.txt (Clustered) ... 9.764s | dist=1129.130631769776 | EVs=9
+9.766s | dist=1076.1912525138368 | EVs=9
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C235_21x_n.txt (Clustered) ... 9.765s | dist=1127.232135972028 | EVs=9
+9.763s | dist=1160.677370430807 | EVs=9
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C239_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C238_21x_n.txt (Clustered) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C237_21x_n.txt (Clustered) ... 9.764s | dist=1123.7122703059545 | EVs=8
+9.766s | dist=1105.783922394938 | EVs=9
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C241_21x_n.txt (Clustered) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C236_21x_n.txt (Clustered) ... 9.765s | dist=1160.7827210467924 | EVs=9
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C243_21x_n.txt (Clustered) ... 9.765s | dist=1008.1235933780264 | EVs=8
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C240_21x_n.txt (Clustered) ... 9.770s | dist=1101.4881856576378 | EVs=10
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C242_21x_n.txt (Clustered) ... 9.773s | dist=1122.2596421384237 | EVs=9
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C245_21x_n.txt (Clustered) ... 9.763s | dist=1092.3125790479749 | EVs=8
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C244_21x_n.txt (Clustered) ... 9.763s | dist=1122.6754981143781 | EVs=9
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C246_21x_n.txt (Clustered) ... 9.764s | dist=1093.1769409448634 | EVs=8
+9.763s | dist=1104.5541492256689 | EVs=8
+9.763s | dist=1144.8037573934737 | EVs=9
+9.765s | dist=1156.4091394741963 | EVs=8
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C247_21x_n.txt (Clustered) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C250_21x_n.txt (Clustered) ... 9.763s | dist=1071.5520341604783 | EVs=8
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC105_21x.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C249_21x_n.txt (Clustered) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC107_21x.txt (Mixed) ... 9.761s | dist=1158.9005980834872 | EVs=9
+9.764s | dist=1141.2713526604587 | EVs=9
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | C248_21x_n.txt (Clustered) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC110_21x_n.txt (Mixed) ... 9.762s | dist=1096.0518103861261 | EVs=9
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC106_21x.txt (Mixed) ... 9.761s | dist=1085.5356374288842 | EVs=9
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC108_21x.txt (Mixed) ... 9.766s | dist=1104.5558013025077 | EVs=9
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC112_21x_n.txt (Mixed) ... 9.775s | dist=1162.311214983337 | EVs=9
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC113_21x_n.txt (Mixed) ... 9.771s | dist=1160.1433242117705 | EVs=9
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC111_21x_n.txt (Mixed) ... 9.764s | dist=1242.3615807116412 | EVs=14
+9.765s | dist=1375.4469512269786 | EVs=17
+9.770s | dist=1098.6633275296924 | EVs=8
+9.768s | dist=1115.0979573418554 | EVs=9
+9.767s | dist=1137.8562484787242 | EVs=9
+9.764s | dist=1107.7354590621621 | EVs=9
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC120_21x_n.txt (Mixed) ... [worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC118_21x_n.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC103_21x.txt (Mixed) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC104_21x.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC101_21x.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC102_21x.txt (Mixed) ... 9.767s | dist=1374.9731218574423 | EVs=15
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC122_21x_n.txt (Mixed) ... 9.765s | dist=1166.5695089323717 | EVs=14
+9.771s | dist=1328.7241290474738 | EVs=16
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC119_21x_n.txt (Mixed) ... [worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC121_21x_n.txt (Mixed) ... 9.762s | dist=1225.3460128984866 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC124_21x_n.txt (Mixed) ... 9.766s | dist=1363.1105739093696 | EVs=14
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC125_21x_n.txt (Mixed) ... 9.763s | dist=1222.58079796806 | EVs=15
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC123_21x_n.txt (Mixed) ... 9.764s | dist=1317.3611715654567 | EVs=15
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC130_21x_n.txt (Mixed) ... 9.763s | dist=1188.7807392739903 | EVs=14
+9.764s | dist=1310.4572143720943 | EVs=16
+9.764s | dist=1398.2368749176917 | EVs=18
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC132_21x_n.txt (Mixed) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC117_21x_n.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC115_21x_n.txt (Mixed) ... 9.769s | dist=1283.3792627579976 | EVs=15
+9.763s | dist=1214.6461281496722 | EVs=15
+9.769s | dist=1442.1451194986944 | EVs=19
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC134_21x_n.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC116_21x_n.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC114_21x_n.txt (Mixed) ... 9.764s | dist=1293.7243740960307 | EVs=15
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC133_21x_n.txt (Mixed) ... 9.776s | dist=1267.462607016982 | EVs=15
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC131_21x_n.txt (Mixed) ... 9.765s | dist=1463.6660314655535 | EVs=16
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC136_21x_n.txt (Mixed) ... 9.761s | dist=1429.3685723377812 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC137_21x_n.txt (Mixed) ... 9.777s | dist=1468.0986613706832 | EVs=16
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC135_21x_n.txt (Mixed) ... 9.764s | dist=1420.2115667172388 | EVs=16
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC142_21x_n.txt (Mixed) ... 9.763s | dist=1455.6556506557033 | EVs=16
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC144_21x_n.txt (Mixed) ... 9.766s | dist=1350.77160487918 | EVs=15
+9.767s | dist=1426.2328079801473 | EVs=16
+9.764s | dist=1302.2171093407424 | EVs=15
+9.765s | dist=1244.3714511641797 | EVs=15
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC127_21x_n.txt (Mixed) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC129_21x_n.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC128_21x_n.txt (Mixed) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC146_21x_n.txt (Mixed) ... 9.765s | dist=1395.186496272043 | EVs=15
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC126_21x_n.txt (Mixed) ... 9.765s | dist=1286.2351331681607 | EVs=14
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC145_21x_n.txt (Mixed) ... 9.772s | dist=1365.0904200972273 | EVs=16
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC143_21x_n.txt (Mixed) ... 9.763s | dist=1454.5373004299195 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC149_21x_n.txt (Mixed) ... 9.770s | dist=1315.030044444789 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC148_21x_n.txt (Mixed) ... 9.763s | dist=1365.0226545459618 | EVs=15
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC147_21x_n.txt (Mixed) ... 9.763s | dist=1285.5604056352702 | EVs=16
+9.762s | dist=1443.953366914614 | EVs=15
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC203_21x.txt (Mixed) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC205_21x.txt (Mixed) ... 9.765s | dist=1436.0151097493188 | EVs=16
+9.764s | dist=1479.333459117104 | EVs=17
+9.766s | dist=1440.1198538784874 | EVs=17
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC141_21x_n.txt (Mixed) ... [worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC138_21x_n.txt (Mixed) ... [worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC140_21x_n.txt (Mixed) ... 9.767s | dist=1414.4738696081895 | EVs=16
+9.767s | dist=1403.4129392955201 | EVs=16
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC207_21x.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC139_21x_n.txt (Mixed) ... 9.765s | dist=1362.7911029143556 | EVs=15
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC204_21x.txt (Mixed) ... 9.771s | dist=1389.694609688154 | EVs=16
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC206_21x.txt (Mixed) ... 9.767s | dist=1430.2291510167872 | EVs=17
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC210_21x_n.txt (Mixed) ... 9.772s | dist=1237.4703393786033 | EVs=15
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC209_21x_n.txt (Mixed) ... 9.774s | dist=1182.8303210831577 | EVs=14
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC208_21x.txt (Mixed) ... 9.760s | dist=1312.078453720969 | EVs=7
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC217_21x_n.txt (Mixed) ... 9.764s | dist=1293.9418472340697 | EVs=6
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC215_21x_n.txt (Mixed) ... 9.764s | dist=1467.519422952807 | EVs=16
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC202_21x.txt (Mixed) ... 9.765s | dist=1309.065861475983 | EVs=16
+9.763s | dist=1283.617143232588 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC150_21x_n.txt (Mixed) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC219_21x_n.txt (Mixed) ... 9.765s | dist=1419.9552292724152 | EVs=15
+9.765s | dist=1249.454585097002 | EVs=14
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC201_21x.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC151_21x_n.txt (Mixed) ... 9.770s | dist=1430.7805052778726 | EVs=6
+9.769s | dist=1195.6959240069596 | EVs=6
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC218_21x_n.txt (Mixed) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC216_21x_n.txt (Mixed) ... 9.767s | dist=1332.2554851731174 | EVs=7
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC222_21x_n.txt (Mixed) ... 9.763s | dist=1234.5632310299432 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC221_21x_n.txt (Mixed) ... 9.763s | dist=1124.423443802767 | EVs=6
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC220_21x_n.txt (Mixed) ... 9.763s | dist=1315.135903141094 | EVs=6
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC229_21x_n.txt (Mixed) ... 9.761s | dist=1360.997097751523 | EVs=7
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC227_21x_n.txt (Mixed) ... 9.762s | dist=1511.2639351655816 | EVs=7
+9.767s | dist=1504.9942974560722 | EVs=6
+9.765s | dist=1256.205401074641 | EVs=7
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC213_21x_n.txt (Mixed) ... [worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC231_21x_n.txt (Mixed) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC214_21x_n.txt (Mixed) ... 9.763s | dist=1272.1542603316761 | EVs=15
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC212_21x_n.txt (Mixed) ... 9.771s | dist=1344.0158179120228 | EVs=16
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC211_21x_n.txt (Mixed) ... 9.764s | dist=1330.41572035472 | EVs=6
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC228_21x_n.txt (Mixed) ... 9.767s | dist=1462.6497044543253 | EVs=7
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC230_21x_n.txt (Mixed) ... 9.764s | dist=1306.2059504237134 | EVs=6
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC234_21x_n.txt (Mixed) ... 9.765s | dist=1213.7472012007645 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC233_21x_n.txt (Mixed) ... 9.764s | dist=1251.777887537734 | EVs=7
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC232_21x_n.txt (Mixed) ... 9.763s | dist=1273.8465450751094 | EVs=6
+9.763s | dist=1269.4843332721966 | EVs=7
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC241_21x_n.txt (Mixed) ... [worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC239_21x_n.txt (Mixed) ... 9.765s | dist=1343.7564016840995 | EVs=6
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC225_21x_n.txt (Mixed) ... 9.764s | dist=1289.9434678231319 | EVs=6
+9.766s | dist=1265.9137396190351 | EVs=6
+9.764s | dist=1374.7763862141119 | EVs=6
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC243_21x_n.txt (Mixed) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC226_21x_n.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC224_21x_n.txt (Mixed) ... 9.763s | dist=1272.7147446125123 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC223_21x_n.txt (Mixed) ... 9.771s | dist=1196.0577998613292 | EVs=6
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC240_21x_n.txt (Mixed) ... 9.767s | dist=1290.7025485310744 | EVs=6
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC242_21x_n.txt (Mixed) ... 9.764s | dist=1265.4586470072002 | EVs=7
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC246_21x_n.txt (Mixed) ... 9.766s | dist=1269.905221688673 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC245_21x_n.txt (Mixed) ... 9.764s | dist=1283.870441953084 | EVs=6
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC244_21x_n.txt (Mixed) ... 9.762s | dist=1242.3784420698753 | EVs=6
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R107_21x.txt (Random) ... 9.765s | dist=1314.3889610751119 | EVs=7
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R105_21x.txt (Random) ... 9.763s | dist=1211.2393562040738 | EVs=6
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC237_21x_n.txt (Mixed) ... 9.763s | dist=1302.989645318453 | EVs=6
+9.765s | dist=1262.0362946512817 | EVs=6
+9.765s | dist=1236.7649747421528 | EVs=6
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R109_21x.txt (Random) ... [worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC238_21x_n.txt (Mixed) ... [worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC236_21x_n.txt (Mixed) ... 9.767s | dist=1252.6982369940695 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC235_21x_n.txt (Mixed) ... 9.762s | dist=1225.0795107559047 | EVs=6
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R108_21x.txt (Random) ... 9.765s | dist=1317.8087772631004 | EVs=7
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R106_21x.txt (Random) ... 9.806s | dist=1287.67913209562 | EVs=6
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R112_21x.txt (Random) ... 9.768s | dist=1322.2508227346596 | EVs=6
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R111_21x.txt (Random) ... 9.762s | dist=1305.9211193979436 | EVs=6
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R110_21x.txt (Random) ... 9.765s | dist=1369.0013209603715 | EVs=17
+9.761s | dist=1616.071138153516 | EVs=21
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R117_21x_n.txt (Random) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R119_21x_n.txt (Random) ... 9.761s | dist=1256.6203264737146 | EVs=6
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC249_21x_n.txt (Mixed) ... 9.768s | dist=1451.2886676111077 | EVs=18
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R121_21x_n.txt (Random) ... 9.768s | dist=1301.0681033979752 | EVs=7
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC248_21x_n.txt (Mixed) ... 9.773s | dist=1336.6011192871765 | EVs=7
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC250_21x_n.txt (Mixed) ... 9.764s | dist=1435.1518135851716 | EVs=7
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | RC247_21x_n.txt (Mixed) ... 9.767s | dist=1381.7286029855502 | EVs=13
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R120_21x_n.txt (Random) ... 9.764s | dist=1470.3389086356578 | EVs=19
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R118_21x_n.txt (Random) ... 9.777s | dist=1313.6132490365885 | EVs=14
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R124_21x_n.txt (Random) ... 9.764s | dist=1388.13120107056 | EVs=16
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R123_21x_n.txt (Random) ... 9.761s | dist=1368.2067984869961 | EVs=14
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R122_21x_n.txt (Random) ... 9.761s | dist=1422.458170659017 | EVs=18
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R129_21x_n.txt (Random) ... 9.763s | dist=1245.1867870603235 | EVs=17
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R131_21x_n.txt (Random) ... 9.763s | dist=1248.0095655382024 | EVs=6
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R103_21x.txt (Random) ... 9.762s | dist=1270.0301838587463 | EVs=18
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R133_21x_n.txt (Random) ... 9.762s | dist=1285.0767536987228 | EVs=6
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R102_21x.txt (Random) ... 9.762s | dist=1296.5598760380014 | EVs=6
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R104_21x.txt (Random) ... 9.764s | dist=1351.3952056065991 | EVs=14
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R132_21x_n.txt (Random) ... 9.765s | dist=1320.524812484519 | EVs=6
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R101_21x.txt (Random) ... 9.767s | dist=1337.247748607362 | EVs=17
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R130_21x_n.txt (Random) ... 9.766s | dist=1395.3349587340524 | EVs=16
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R136_21x_n.txt (Random) ... 9.760s | dist=1414.2583033306826 | EVs=18
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R135_21x_n.txt (Random) ... 9.762s | dist=1253.9444774925198 | EVs=17
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R134_21x_n.txt (Random) ... 9.763s | dist=1283.719360340306 | EVs=18
+9.760s | dist=1317.5683665314007 | EVs=17
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R141_21x_n.txt (Random) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R143_21x_n.txt (Random) ... 9.761s | dist=1445.4064055364042 | EVs=17
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R115_21x_n.txt (Random) ... 9.764s | dist=1601.219079042223 | EVs=20
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R114_21x_n.txt (Random) ... 9.779s | dist=1383.862348372028 | EVs=16
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R145_21x_n.txt (Random) ... 9.764s | dist=1338.7755784716203 | EVs=15
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R116_21x_n.txt (Random) ... 9.765s | dist=1198.6060096927777 | EVs=16
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R144_21x_n.txt (Random) ... 9.772s | dist=1682.1099386128344 | EVs=26
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R113_21x_n.txt (Random) ... 9.759s | dist=1449.1690293670786 | EVs=17
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R148_21x_n.txt (Random) ... 9.789s | dist=1484.523802497227 | EVs=18
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R142_21x_n.txt (Random) ... 9.773s | dist=1440.935632486372 | EVs=18
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R147_21x_n.txt (Random) ... 9.767s | dist=1267.9255595491663 | EVs=17
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R146_21x_n.txt (Random) ... 9.760s | dist=1386.9670141103982 | EVs=17
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R203_21x.txt (Random) ... 9.761s | dist=1367.7225332790904 | EVs=16
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R205_21x.txt (Random) ... 9.764s | dist=1178.7578598411428 | EVs=16
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R127_21x_n.txt (Random) ... 9.762s | dist=1234.089126886006 | EVs=17
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R126_21x_n.txt (Random) ... 9.769s | dist=1406.2634345287393 | EVs=17
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R207_21x.txt (Random) ... 9.771s | dist=1216.7374543649387 | EVs=16
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R206_21x.txt (Random) ... 9.787s | dist=1523.5372415513114 | EVs=19
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R128_21x_n.txt (Random) ... 9.781s | dist=1290.8142848029145 | EVs=17
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R125_21x_n.txt (Random) ... 9.768s | dist=1440.6052592118574 | EVs=18
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R210_21x.txt (Random) ... 9.765s | dist=1324.5566907197115 | EVs=17
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R204_21x.txt (Random) ... 9.765s | dist=1420.0364871067593 | EVs=18
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R209_21x.txt (Random) ... 9.760s | dist=1410.8131378736543 | EVs=18
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R208_21x.txt (Random) ... 9.759s | dist=1321.081092551467 | EVs=6
+9.762s | dist=1255.3025817619136 | EVs=6
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R217_21x_n.txt (Random) ... [worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R215_21x_n.txt (Random) ... 9.763s | dist=1377.8749220432157 | EVs=16
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R139_21x_n.txt (Random) ... 9.771s | dist=1444.4394944491548 | EVs=18
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R138_21x_n.txt (Random) ... 9.765s | dist=1238.8237905164174 | EVs=4
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R219_21x_n.txt (Random) ... 9.764s | dist=1229.0422821703148 | EVs=6
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R218_21x_n.txt (Random) ... 9.774s | dist=1416.608879497668 | EVs=18
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R140_21x_n.txt (Random) ... 9.767s | dist=1177.1665840841306 | EVs=16
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R137_21x_n.txt (Random) ... 9.761s | dist=1118.5880997881118 | EVs=4
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R216_21x_n.txt (Random) ... 9.778s | dist=1168.7434221396907 | EVs=5
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R222_21x_n.txt (Random) ... 9.762s | dist=1118.6697744193377 | EVs=4
+9.767s | dist=1212.8608048676922 | EVs=6
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R220_21x_n.txt (Random) ... [worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R221_21x_n.txt (Random) ... 9.760s | dist=1200.2151289781111 | EVs=4
+9.764s | dist=1273.2219121369717 | EVs=4
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R227_21x_n.txt (Random) ... [worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R229_21x_n.txt (Random) ... 9.768s | dist=1176.1709561487417 | EVs=16
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R201_21x.txt (Random) ... 9.763s | dist=1439.9891455398335 | EVs=5
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R231_21x_n.txt (Random) ... 9.785s | dist=1278.8341215101948 | EVs=17
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R150_21x_n.txt (Random) ... 9.785s | dist=1154.8496848789275 | EVs=5
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R230_21x_n.txt (Random) ... 9.773s | dist=1418.2368659960098 | EVs=17
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R202_21x.txt (Random) ... 9.762s | dist=1404.1186255482007 | EVs=5
+[worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R228_21x_n.txt (Random) ... 9.773s | dist=1501.5031243652204 | EVs=18
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R149_21x_n.txt (Random) ... 9.761s | dist=1290.929657405146 | EVs=5
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R234_21x_n.txt (Random) ... 9.763s | dist=1292.5365938088328 | EVs=5
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R233_21x_n.txt (Random) ... 9.767s | dist=1235.6541663263338 | EVs=4
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R232_21x_n.txt (Random) ... 9.761s | dist=1280.9452590759745 | EVs=5
+[worker 5] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R239_21x_n.txt (Random) ... 9.761s | dist=1341.6277146602663 | EVs=5
+[worker 7] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R241_21x_n.txt (Random) ... 9.786s | dist=1410.5900092829972 | EVs=7
+[worker 3] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R213_21x_n.txt (Random) ... 9.764s | dist=1336.7163787175532 | EVs=5
+[worker 9] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R243_21x_n.txt (Random) ... 9.765s | dist=1404.8519296511388 | EVs=17
+[worker 2] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R212_21x_n.txt (Random) ... 9.763s | dist=1245.4787976794164 | EVs=5
+[worker 8] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R242_21x_n.txt (Random) ... 9.769s | dist=1436.750208995977 | EVs=5
+[worker 4] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R214_21x_n.txt (Random) ... 9.763s | dist=1279.3566084291685 | EVs=17
+9.768s | dist=1283.4859202233251 | EVs=5
+[worker 1] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R211_21x.txt (Random) ... [worker 6] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R240_21x_n.txt (Random) ... 9.763s | dist=1253.8013896938178 | EVs=5
+[worker 12] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R246_21x_n.txt (Random) ... 9.763s | dist=1346.143723090847 | EVs=5
+[worker 10] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R244_21x_n.txt (Random) ... 9.789s | dist=1374.1195812537064 | EVs=5
+[worker 11] core_scaling | ALNS | core_count=2 | jobs=2 | timeout=10s options={'unlimited_iterations': True} | R245_21x_n.txt (Random) ... 
