@@ -825,6 +825,7 @@ def _plot_metric_solver_by_type(
     Plot one solver against itself across distribution types.
 
     Lines:
+      - All
       - Clustered
       - Random
       - Mixed
@@ -833,8 +834,12 @@ def _plot_metric_solver_by_type(
 
     by_type: Dict[str, List[tuple]] = defaultdict(list)
 
+    allowed_types = [INSTANCE_TYPE_ALL] + INSTANCE_TYPES
+
     for row in summary_rows:
-        if row.get("instance_type") not in INSTANCE_TYPES:
+        row_type = row.get("instance_type")
+
+        if row_type not in allowed_types:
             continue
 
         if row.get("solver") != solver_name:
@@ -850,7 +855,7 @@ def _plot_metric_solver_by_type(
         if y == "":
             continue
 
-        by_type[row["instance_type"]].append(
+        by_type[row_type].append(
             (
                 int(row["customers"]),
                 float(y),
@@ -865,7 +870,7 @@ def _plot_metric_solver_by_type(
         return
 
     # Keep a stable, meaningful order.
-    for instance_type in INSTANCE_TYPES:
+    for instance_type in allowed_types:
         pts = by_type.get(instance_type, [])
 
         if not pts:
